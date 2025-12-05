@@ -1,3 +1,10 @@
+<p align="center">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" width="610" srcset="https://github.com/user-attachments/assets/25df81df-7d0d-45a8-842f-e8e8f65745b3">
+        <img alt="RevitBenchmark" width="610" src="https://github.com/user-attachments/assets/32222c6d-c56d-4c0f-8634-1e78774d7f97">
+    </picture>
+</p>
+
 ## Benchmarking library for Revit
 
 Write performance benchmarks for your Revit add-ins using the [BenchmarkDotNet](https://benchmarkdotnet.org/), and share reproducible measurement experiments.
