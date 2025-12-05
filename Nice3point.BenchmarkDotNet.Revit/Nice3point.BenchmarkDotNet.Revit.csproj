@@ -10,7 +10,7 @@
         <PackageType>Dependency</PackageType>
         <PackageId>Nice3point.BenchmarkDotNet.Revit</PackageId>
         <Authors>Nice3point</Authors>
-        <Description>.NET benchmark library for Revit</Description>
+        <Description>.NET benchmarking library for Revit</Description>
         <PackageTags>autodesk;revit;benchmark</PackageTags>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/Nice3point/RevitUnit</RepositoryUrl>
