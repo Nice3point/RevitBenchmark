@@ -7,11 +7,15 @@
 
 ## Benchmarking library for Revit
 
+[![Nuget](https://img.shields.io/nuget/vpre/Nice3point.BenchmarkDotNet.Revit?style=for-the-badge)](https://www.nuget.org/packages/Nice3point.Revit.Extensions)
+[![Downloads](https://img.shields.io/nuget/dt/Nice3point.BenchmarkDotNet.Revit?style=for-the-badge)](https://www.nuget.org/packages/Nice3point.Revit.Extensions)
+[![Last Commit](https://img.shields.io/github/last-commit/Nice3point/RevitExtensions/develop?style=for-the-badge)](https://github.com/Nice3point/RevitBenchmark/commits/develop)
+
 Write performance benchmarks for your Revit add-ins using the [BenchmarkDotNet](https://benchmarkdotnet.org/), and share reproducible measurement experiments.
 
 ## Installation
 
-You can install the Benchmark as a [NuGet package](https://www.nuget.org/packages/Nice3point.BenchmarkDotNet.Revit).
+You can install this library as a [NuGet package](https://www.nuget.org/packages/Nice3point.BenchmarkDotNet.Revit).
 
 The packages are compiled for specific versions of Revit. To support different versions of libraries in one project, use the `RevitVersion` property:
 
