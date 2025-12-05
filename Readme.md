@@ -49,7 +49,7 @@ public class MyBenchmarks : RevitApiBenchmark
 }
 ```
 
-This is your runnable benchmark. The base class initializes a Revit session so the Revit API can be used safely during benchmark runs.
+This is your runnable benchmark. The base class ensures the benchmark executes within Revit's single-threaded API context.
 
 ## Running your benchmarks
 
