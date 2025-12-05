@@ -100,7 +100,7 @@ using BenchmarkDotNet.Attributes;
 
 public sealed class RevitDocumentBenchmarks : RevitApiBenchmark
 {
-    private static Document _documentFile = null!;
+    private Document _documentFile = null!;
 
     protected sealed override void OnSetup()
     {
