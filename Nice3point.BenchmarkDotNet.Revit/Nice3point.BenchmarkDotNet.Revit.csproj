@@ -1,0 +1,69 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <Configurations>Debug.R22;Debug.R23;Debug.R24;Debug.R25;Debug.R26</Configurations>
+        <Configurations>$(Configurations);Release.R22;Release.R23;Release.R24;Release.R25;Release.R26</Configurations>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageType>Dependency</PackageType>
+        <PackageId>Nice3point.BenchmarkDotNet.Revit</PackageId>
+        <Authors>Nice3point</Authors>
+        <Description>.NET benchmark library for Revit</Description>
+        <PackageTags>autodesk;revit;benchmark</PackageTags>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/Nice3point/RevitUnit</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/Nice3point/RevitUnit</PackageProjectUrl>
+        <PackageIcon>images\PackageIcon.png</PackageIcon>
+        <PackageLicenseFile>License.md</PackageLicenseFile>
+        <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <DebugType>portable</DebugType>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\.nuget\PackageIcon.png" PackagePath="images\" Pack="true" Visible="false"/>
+        <None Include="..\License.md" PackagePath="" Pack="true" Visible="false"/>
+        <None Include="..\Readme.md" PackagePath="" Pack="true" Visible="false"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Nice3point.Revit.Build.Tasks" PrivateAssets="all"/>
+        <PackageReference Include="Nice3point.Revit.Api.RevitAPI" PrivateAssets="all"/>
+        <PackageReference Include="Nice3point.Revit.Injector" PrivateAssets="all"/>
+        <PackageReference Include="BenchmarkDotNet"/>
+        <PackageReference Include="PolyHook2.NET"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+        <FrameworkReference Include="Microsoft.WindowsDesktop.App"/>
+    </ItemGroup>
+
+    <Target Name="CopyRepackDependencies" AfterTargets="Build" Condition="$(Configuration.Contains('Release'))">
+        <PropertyGroup>
+            <DependenciesFolder>$(OutDir)Dependencies</DependenciesFolder>
+        </PropertyGroup>
+
+        <MakeDir Directories="$(DependenciesFolder)" Condition="!Exists('$(DependenciesFolder)')"/>
+
+        <ItemGroup>
+            <AllReferences Include="@(ReferencePathWithRefAssemblies)"/>
+        </ItemGroup>
+
+        <Copy SourceFiles="@(AllReferences)" DestinationFolder="$(DependenciesFolder)" SkipUnchangedFiles="true"/>
+
+        <Message Text="Copied dependencies to: $(DependenciesFolder)" Importance="high"/>
+    </Target>
+
+</Project>
