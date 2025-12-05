@@ -5,7 +5,7 @@ namespace Nice3point.BenchmarkDotNet.Revit.Tests;
 [MemoryDiagnoser]
 public class RevitCollectorTests : RevitApiBenchmark
 {
-    private static Document _documentFile = null!;
+    private Document _documentFile = null!;
 
     protected sealed override void OnSetup()
     {
