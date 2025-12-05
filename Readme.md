@@ -7,9 +7,9 @@
 
 ## Benchmarking library for Revit
 
-[![Nuget](https://img.shields.io/nuget/vpre/Nice3point.BenchmarkDotNet.Revit?style=for-the-badge)](https://www.nuget.org/packages/Nice3point.Revit.Extensions)
-[![Downloads](https://img.shields.io/nuget/dt/Nice3point.BenchmarkDotNet.Revit?style=for-the-badge)](https://www.nuget.org/packages/Nice3point.Revit.Extensions)
-[![Last Commit](https://img.shields.io/github/last-commit/Nice3point/RevitExtensions/develop?style=for-the-badge)](https://github.com/Nice3point/RevitBenchmark/commits/develop)
+[![Nuget](https://img.shields.io/nuget/vpre/Nice3point.BenchmarkDotNet.Revit?style=for-the-badge)](https://www.nuget.org/packages/Nice3point.BenchmarkDotNet.Revit)
+[![Downloads](https://img.shields.io/nuget/dt/Nice3point.BenchmarkDotNet.Revit?style=for-the-badge)](https://www.nuget.org/packages/Nice3point.BenchmarkDotNet.Revit)
+[![Last Commit](https://img.shields.io/github/last-commit/Nice3point/RevitBenchmark/develop?style=for-the-badge)](https://github.com/Nice3point/RevitBenchmark/commits/develop)
 
 Write performance benchmarks for your Revit add-ins using the [BenchmarkDotNet](https://benchmarkdotnet.org/), and share reproducible measurement experiments.
 
