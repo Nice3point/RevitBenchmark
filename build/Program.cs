@@ -23,26 +23,20 @@ await PipelineHostBuilder.Create()
             return;
         }
 
-        collection.AddModule<ParseSolutionConfigurationsModule>();
+        collection.AddModule<ResolveConfigurationsModule>();
         collection.AddModule<UpdateNugetSourceModule>();
         collection.AddModule<CompileProjectModule>();
 
         if (args.Contains("pack"))
         {
-            collection.AddOptions<PackOptions>().Bind(context.Configuration.GetSection("Pack")).ValidateDataAnnotations();
-
             collection.AddModule<CleanProjectsModule>();
             collection.AddModule<RepackInjectorModule>();
-            collection.AddModule<PackProjectsModule>();
+            collection.AddModule<PackNugetModule>();
         }
 
         if (args.Contains("publish"))
         {
-            if (!context.HostingEnvironment.IsProduction())
-            {
-                throw new InvalidOperationException("Publish can only be run in production");
-            }
-
+            collection.AddOptions<PublishOptions>().Bind(context.Configuration.GetSection("Publish")).ValidateDataAnnotations();
             collection.AddOptions<NuGetOptions>().Bind(context.Configuration.GetSection("NuGet")).ValidateDataAnnotations();
 
             collection.AddModule<PublishNugetModule>();
