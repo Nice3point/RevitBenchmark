@@ -12,13 +12,15 @@ using Sourcy.DotNet;
 namespace Build.Modules;
 
 [DependsOn<UpdateNugetSourceModule>]
-[DependsOn<ParseSolutionConfigurationsModule>]
+[DependsOn<ResolveConfigurationsModule>]
 public sealed class CompileProjectModule(IOptions<BuildOptions> buildOptions) : Module
 {
     protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
     {
-        var configurations = await GetModule<ParseSolutionConfigurationsModule>();
-        foreach (var configuration in configurations.Value!)
+        var configurationsResult = await GetModule<ResolveConfigurationsModule>();
+        var configurations = configurationsResult.Value!;
+        
+        foreach (var configuration in configurations)
         {
             await SubModule(configuration, async () => await CompileAsync(context, configuration, cancellationToken));
         }

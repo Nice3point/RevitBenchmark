@@ -4,15 +4,26 @@ using Microsoft.Extensions.Options;
 using ModularPipelines.Context;
 using ModularPipelines.Git.Extensions;
 using ModularPipelines.Modules;
+using Sourcy.DotNet;
 
 namespace Build.Modules;
 
 [SkipIfContinuousIntegrationBuild]
-public sealed class CleanProjectsModule(IOptions<PackOptions> packOptions) : Module
+public sealed class CleanProjectsModule(IOptions<BuildOptions> buildOptions) : Module
 {
     protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
     {
-        var outputDirectory = context.Git().RootDirectory.GetFolder(packOptions.Value.OutputDirectory);
+        var rootDirectory = context.Git().RootDirectory;
+        var outputDirectory = rootDirectory.GetFolder(buildOptions.Value.OutputDirectory);
+        var buildOutputDirectories = rootDirectory
+            .GetFolders(folder => folder.Name is "bin" or "obj")
+            .Where(folder => folder.Parent != Projects.Build.Directory);
+
+        foreach (var buildFolder in buildOutputDirectories)
+        {
+            buildFolder.Clean();
+        }
+
         if (outputDirectory.Exists)
         {
             outputDirectory.Clean();

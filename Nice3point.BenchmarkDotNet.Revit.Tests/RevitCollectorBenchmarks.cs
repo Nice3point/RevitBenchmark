@@ -3,7 +3,7 @@
 namespace Nice3point.BenchmarkDotNet.Revit.Tests;
 
 [MemoryDiagnoser]
-public class RevitCollectorTests : RevitApiBenchmark
+public class RevitCollectorBenchmarks : RevitApiBenchmark
 {
     private Document _documentFile = null!;
 
