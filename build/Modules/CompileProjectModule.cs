@@ -11,6 +11,9 @@ using Sourcy.DotNet;
 
 namespace Build.Modules;
 
+/// <summary>
+///     Compile the project.
+/// </summary>
 [DependsOn<UpdateNugetSourceModule>]
 [DependsOn<ResolveConfigurationsModule>]
 public sealed class CompileProjectModule(IOptions<BuildOptions> buildOptions) : Module
@@ -41,8 +44,8 @@ public sealed class CompileProjectModule(IOptions<BuildOptions> buildOptions) : 
             Verbosity = Verbosity.Minimal,
             Properties = new List<KeyValue>
             {
-                ("Version", version.ToString()),
-            },
+                ("Version", version)
+            }
         }, cancellationToken);
     }
 }

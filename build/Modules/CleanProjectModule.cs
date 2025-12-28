@@ -8,8 +8,11 @@ using Sourcy.DotNet;
 
 namespace Build.Modules;
 
+/// <summary>
+///     Clean projects and artifact directories.
+/// </summary>
 [SkipIfContinuousIntegrationBuild]
-public sealed class CleanProjectsModule(IOptions<BuildOptions> buildOptions) : Module
+public sealed class CleanProjectModule(IOptions<BuildOptions> buildOptions) : Module
 {
     protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
     {
