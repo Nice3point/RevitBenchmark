@@ -18,24 +18,18 @@ public sealed class PublishNugetModule(IOptions<BuildOptions> buildOptions, IOpt
 {
     protected override async Task<CommandResult[]?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
     {
-        var privateOutputFolder = context.Git().RootDirectory.GetFolder(buildOptions.Value.OutputDirectory);
-        var targetPackages = privateOutputFolder.GetFiles(file => file.Extension == ".nupkg").ToArray();
+        var outputFolder = context.Git().RootDirectory.GetFolder(buildOptions.Value.OutputDirectory);
+        var targetPackages = outputFolder.GetFiles(file => file.Extension == ".nupkg").ToArray();
         targetPackages.ShouldNotBeEmpty("No NuGet packages were found to publish");
 
-        await targetPackages
-            .SelectAsync(async file => await PushAsync(context, file, nuGetOptions.Value.Source, nuGetOptions.Value.ApiKey, cancellationToken), cancellationToken)
+        return await targetPackages
+            .SelectAsync(async file => await context.DotNet().Nuget.Push(new DotNetNugetPushOptions
+                {
+                    Path = file,
+                    ApiKey = nuGetOptions.Value.ApiKey,
+                    Source = nuGetOptions.Value.Source
+                }, cancellationToken),
+                cancellationToken)
             .ProcessInParallel();
-
-        return await NothingAsync();
-    }
-
-    private Task<CommandResult> PushAsync(IPipelineContext context, File file, string source, string apiKey, CancellationToken cancellationToken)
-    {
-        return context.DotNet().Nuget.Push(new DotNetNugetPushOptions
-        {
-            Path = file,
-            ApiKey = apiKey,
-            Source = source
-        }, cancellationToken);
     }
 }
