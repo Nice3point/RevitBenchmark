@@ -1,3 +1,5 @@
+using Build.Options;
+using Microsoft.Extensions.Options;
 using ModularPipelines.Context;
 using ModularPipelines.Enums;
 using ModularPipelines.Git.Extensions;
@@ -7,11 +9,14 @@ using Shouldly;
 
 namespace Build.Modules;
 
-public sealed class ResolveVersioningModule : Module<ResolveVersioningResult>
+/// <summary>
+///     Resolve semantic versions for compiling and publishing the templates.
+/// </summary>
+public sealed class ResolveVersioningModule(IOptions<PublishOptions> publishOptions) : Module<ResolveVersioningResult>
 {
     protected override async Task<ResolveVersioningResult?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
     {
-        var version = context.Git().Information.Tag;
+        var version = publishOptions.Value.Version;
         if (context.Environment.EnvironmentName == "Production")
         {
             version.ShouldNotBeNullOrWhiteSpace();
@@ -20,6 +25,9 @@ public sealed class ResolveVersioningModule : Module<ResolveVersioningResult>
         return await CreateFromVersionStringAsync(context, version!);
     }
 
+    /// <summary>
+    ///     Resolve versions using the specified version string.
+    /// </summary>
     private static async Task<ResolveVersioningResult> CreateFromVersionStringAsync(IPipelineContext context, string version)
     {
         var versionParts = version.Split('-');
@@ -34,6 +42,9 @@ public sealed class ResolveVersioningModule : Module<ResolveVersioningResult>
         };
     }
 
+    /// <summary>
+    ///     Retrieves the previous version from the git history.
+    /// </summary>
     private static async Task<string> FetchPreviousVersionAsync(IPipelineContext context)
     {
         var describeResult = await context.Git().Commands.Describe(new GitDescribeOptions

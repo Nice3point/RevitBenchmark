@@ -13,7 +13,6 @@ using Sourcy.DotNet;
 namespace Build.Modules;
 
 [DependsOn<RepackInjectorModule>]
-[DependsOn<ResolveVersioningModule>]
 [DependsOn<ResolveConfigurationsModule>]
 public sealed class PackNugetModule(IOptions<BuildOptions> buildOptions) : Module
 {
