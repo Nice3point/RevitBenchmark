@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Nice3point.Revit.Sdk/6.0.0-preview.1.20251228">
 
     <PropertyGroup>
         <OutputType>Library</OutputType>
@@ -38,7 +38,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Nice3point.Revit.Build.Tasks" PrivateAssets="all"/>
         <PackageReference Include="Nice3point.Revit.Api.RevitAPI" PrivateAssets="all"/>
         <PackageReference Include="Nice3point.Revit.Injector" PrivateAssets="all"/>
         <PackageReference Include="BenchmarkDotNet"/>

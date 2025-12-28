@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Nice3point.Revit.Sdk/6.0.0-preview.1.20251228">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Nice3point.Revit.Build.Tasks"/>
         <PackageReference Include="Nice3point.Revit.Api.RevitAPI"/>
         <PackageReference Include="Nice3point.Revit.Injector"/>
     </ItemGroup>
