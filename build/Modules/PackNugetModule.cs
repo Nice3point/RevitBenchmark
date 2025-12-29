@@ -13,17 +13,17 @@ using Sourcy.DotNet;
 namespace Build.Modules;
 
 [DependsOn<RepackInjectorModule>]
+[DependsOn<GenerateNugetChangelogModule>]
 [DependsOn<ResolveConfigurationsModule>]
 public sealed class PackNugetModule(IOptions<BuildOptions> buildOptions) : Module
 {
     protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
     {
-        var changelogModule = GetModuleIfRegistered<GenerateNugetChangelogModule>();
+        var changelogResult = await GetModule<GenerateNugetChangelogModule>();
         var configurationsResult = await GetModule<ResolveConfigurationsModule>();
-        var changelogResult = changelogModule is null ? null : await changelogModule;
 
         var outputFolder = context.Git().RootDirectory.GetFolder(buildOptions.Value.OutputDirectory);
-        var changelog = changelogResult?.Value ?? string.Empty;
+        var changelog = changelogResult.Value ?? string.Empty;
         var configurations = configurationsResult.Value!;
 
         foreach (var configuration in configurations)
