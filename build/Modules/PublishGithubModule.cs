@@ -19,7 +19,7 @@ namespace Build.Modules;
 ///     Publish the templates to GitHub.
 /// </summary>
 [SkipIfNoGitHubToken]
-[DependsOn<RepackInjectorModule>]
+[DependsOn<PackNugetModule>]
 [DependsOn<ResolvePackVersionModule>]
 [DependsOn<GenerateGitHubChangelogModule>]
 public sealed class PublishGithubModule(IOptions<BuildOptions> buildOptions) : Module<ReleaseAsset[]?>

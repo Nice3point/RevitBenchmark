@@ -13,7 +13,7 @@ using File = ModularPipelines.FileSystem.File;
 
 namespace Build.Modules;
 
-[DependsOn<PackNugetModule>]
+[DependsOn<PublishGithubModule>]
 public sealed class PublishNugetModule(IOptions<BuildOptions> buildOptions, IOptions<NuGetOptions> nuGetOptions) : Module<CommandResult[]?>
 {
     protected override async Task<CommandResult[]?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
