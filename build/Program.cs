@@ -23,14 +23,16 @@ await PipelineHostBuilder.Create()
             return;
         }
 
-        collection.AddModule<ResolveVersioningModule>();
         collection.AddModule<ResolveConfigurationsModule>();
         collection.AddModule<UpdateNugetSourceModule>();
         collection.AddModule<CompileProjectModule>();
 
         if (args.Contains("pack"))
         {
+            collection.AddOptions<PackOptions>().Bind(context.Configuration.GetSection("Pack")).ValidateDataAnnotations();
+
             collection.AddModule<CleanProjectModule>();
+            collection.AddModule<ResolveVersioningModule>();
             collection.AddModule<RepackInjectorModule>();
             collection.AddModule<PackNugetModule>();
         }
