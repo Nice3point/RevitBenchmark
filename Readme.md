@@ -55,7 +55,7 @@ This is your runnable benchmark. The base class ensures the benchmark executes w
 
 You can run your benchmarks with a simple configuration.
 BenchmarkDotNet uses the `Release` configuration by default to run, which will cause a failure when running benchmarks for Revit, where API multi-versioning is required.
-In this case, use the `WithCurrentConfiguration()` extension for the `Job`, which will run the benchmark for your active project configuration.
+In this case, use the `WithCurrentConfiguration()` extension for the `Job`, which will run the benchmark for your selected solution configuration.
 
 ```csharp
 using BenchmarkDotNet.Configs;
@@ -79,7 +79,7 @@ Benchmark Revit application‑level operations:
 ```csharp
 using BenchmarkDotNet.Attributes;
 
-public sealed class RevitApplicationBenchmarks : RevitApiBenchmark
+public class RevitApplicationBenchmarks : RevitApiBenchmark
 {
     [Benchmark]
     public double Create_XYZ_Distance()
@@ -98,7 +98,7 @@ If you need these hooks in your benchmarks, for example to open the Document, us
 ```csharp
 using BenchmarkDotNet.Attributes;
 
-public sealed class RevitDocumentBenchmarks : RevitApiBenchmark
+public class RevitDocumentBenchmarks : RevitApiBenchmark
 {
     private Document _documentFile = null!;
 
@@ -126,6 +126,32 @@ public sealed class RevitDocumentBenchmarks : RevitApiBenchmark
         return new FilteredElementCollector(_documentFile)
             .WherePasses(new ElementIsElementTypeFilter())
             .ToElements();
+    }
+
+    [Benchmark]
+    public List<Element> WhereElementIsElementTypeToList()
+    {
+        return new FilteredElementCollector(_documentFile)
+            .WhereElementIsElementType()
+            .ToList();
+    }
+
+    [Benchmark]
+    public List<ElementType> WhereElementIsElementTypeCastToList()
+    {
+        return new FilteredElementCollector(_documentFile)
+            .WhereElementIsElementType()
+            .Cast<ElementType>()
+            .ToList();
+    }
+
+    [Benchmark]
+    public List<ElementType> WhereElementIsElementTypeOfTypeToList()
+    {
+        return new FilteredElementCollector(_documentFile)
+            .WhereElementIsElementType()
+            .OfType<ElementType>()
+            .ToList();
     }
 }
 ```
