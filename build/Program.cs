@@ -10,11 +10,13 @@ await PipelineHostBuilder.Create()
     .ConfigureAppConfiguration((context, builder) =>
     {
         builder.AddJsonFile("appsettings.json")
+            .AddUserSecrets<Program>()
             .AddEnvironmentVariables();
     })
     .ConfigureServices((context, collection) =>
     {
         collection.AddOptions<BuildOptions>().Bind(context.Configuration.GetSection("Build")).ValidateDataAnnotations();
+        collection.AddOptions<NuGetOptions>().Bind(context.Configuration.GetSection("NuGet")).ValidateDataAnnotations();
 
         if (args.Contains("delete-nuget"))
         {
@@ -40,7 +42,6 @@ await PipelineHostBuilder.Create()
         if (args.Contains("publish"))
         {
             collection.AddOptions<PublishOptions>().Bind(context.Configuration.GetSection("Publish")).ValidateDataAnnotations();
-            collection.AddOptions<NuGetOptions>().Bind(context.Configuration.GetSection("NuGet")).ValidateDataAnnotations();
 
             collection.AddModule<PublishNugetModule>();
         }

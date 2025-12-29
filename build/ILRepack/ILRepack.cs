@@ -1,7 +1,5 @@
 ﻿using Build.ILRepack.Options;
 using ModularPipelines.Context;
-using ModularPipelines.DotNet.Extensions;
-using ModularPipelines.DotNet.Options;
 using ModularPipelines.FileSystem;
 using ModularPipelines.Models;
 using ModularPipelines.Options;
@@ -19,10 +17,20 @@ public sealed class ILRepack(IPipelineContext context)
 
         try
         {
-            await context.DotNet().Tool.Install(new DotNetToolInstallOptions("dotnet-ilrepack")
+            await context.Command.ExecuteCommandLineTool(new CommandLineToolOptions("dotnet")
             {
-                ToolPath = _temporaryFolder.Path
+                Arguments =
+                [
+                    "tool",
+                    "install",
+                    "--tool-path", _temporaryFolder.Path,
+                    "dotnet-ilrepack"
+                ]
             }, cancellationToken);
+            // await context.DotNet().Tool.Install(new DotNetToolInstallOptions("dotnet-ilrepack")
+            // {
+            //     ToolPath = _temporaryFolder.Path
+            // }, cancellationToken);
 
             return await context.Command.ExecuteCommandLineTool(options with
             {
