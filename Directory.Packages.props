@@ -8,7 +8,6 @@
 
     <ItemGroup>
         <!-- Revit Platform -->
-        <PackageVersion Include="Nice3point.Revit.Build.Tasks" Version="3.0.1"/>
         <PackageVersion Include="Nice3point.Revit.Api.RevitAPI" Version="$(RevitVersion).*" Condition="$(RevitVersion) != ''"/>
         <PackageVersion Include="Nice3point.Revit.Api.RevitNET" Version="$(RevitVersion).*" Condition="$(RevitVersion) != ''"/>
         <PackageVersion Include="Nice3point.Revit.Injector" Version="$(RevitVersion).*" Condition="$(RevitVersion) != ''"/>
