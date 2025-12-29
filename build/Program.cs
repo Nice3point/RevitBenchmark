@@ -25,25 +25,31 @@ await PipelineHostBuilder.Create()
             return;
         }
 
+        collection.AddModule<CleanProjectModule>();
+        collection.AddModule<CompileProjectModule>();
         collection.AddModule<ResolveConfigurationsModule>();
         collection.AddModule<UpdateNugetSourceModule>();
-        collection.AddModule<CompileProjectModule>();
 
         if (args.Contains("pack"))
         {
             collection.AddOptions<PackOptions>().Bind(context.Configuration.GetSection("Pack")).ValidateDataAnnotations();
 
-            collection.AddModule<CleanProjectModule>();
-            collection.AddModule<ResolveVersioningModule>();
+            collection.AddModule<ResolvePackVersionModule>();
             collection.AddModule<RepackInjectorModule>();
             collection.AddModule<PackNugetModule>();
+            collection.AddModule<GenerateChangelogModule>();
+            collection.AddModule<UpdateReadmeModule>();
+            collection.AddModule<RestoreReadmeModule>();
         }
 
         if (args.Contains("publish"))
         {
             collection.AddOptions<PublishOptions>().Bind(context.Configuration.GetSection("Publish")).ValidateDataAnnotations();
 
+            collection.AddModule<GenerateGitHubChangelogModule>();
+            collection.AddModule<GenerateNugetChangelogModule>();
             collection.AddModule<PublishNugetModule>();
+            collection.AddModule<PublishGithubModule>();
         }
     })
     .ExecutePipelineAsync();

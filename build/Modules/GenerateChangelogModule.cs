@@ -11,12 +11,12 @@ namespace Build.Modules;
 /// <summary>
 ///     Generate the changelog for publishing the templates.
 /// </summary>
-[DependsOn<ResolveVersioningModule>]
+[DependsOn<ResolvePackVersionModule>]
 public sealed class GenerateChangelogModule : Module<string>
 {
     protected override async Task<string?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
     {
-        var versioningResult = await GetModule<ResolveVersioningModule>();
+        var versioningResult = await GetModule<ResolvePackVersionModule>();
         var versioning = versioningResult.Value!;
         
         var changelogFile = context.Git().RootDirectory.GetFile("Changelog.md");

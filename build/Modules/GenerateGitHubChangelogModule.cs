@@ -9,12 +9,12 @@ namespace Build.Modules;
 ///     Generate and format the changelog for publishing on the GitHub.
 /// </summary>
 [DependsOn<GenerateChangelogModule>]
-[DependsOn<ResolveVersioningModule>]
+[DependsOn<ResolvePackVersionModule>]
 public sealed class GenerateGitHubChangelogModule : Module<string>
 {
     protected override async Task<string?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
     {
-        var versioningResult = await GetModule<ResolveVersioningModule>();
+        var versioningResult = await GetModule<ResolvePackVersionModule>();
         var changelogResult = await GetModule<GenerateChangelogModule>();
         var versioning = versioningResult.Value!;
         var changelog = changelogResult.Value!;
