@@ -27,4 +27,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOTNET_ENVIRONMENT: "Production"
-          NuGet__ApiKey: ${{ secrets.NICE3POINT_PACKAGES_API_KEY }}
+          NuGet__InternalApiKey: ${{ secrets.GITHUB_TOKEN }}
+          NuGet__ApiKey: ${{ secrets.NUGET_API_KEY }}
