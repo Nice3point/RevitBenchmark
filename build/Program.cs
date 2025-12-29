@@ -38,6 +38,7 @@ await PipelineHostBuilder.Create()
             collection.AddModule<RepackInjectorModule>();
             collection.AddModule<PackNugetModule>();
             collection.AddModule<GenerateChangelogModule>();
+            collection.AddModule<GenerateNugetChangelogModule>();
             collection.AddModule<UpdateReadmeModule>();
             collection.AddModule<RestoreReadmeModule>();
         }
@@ -47,7 +48,6 @@ await PipelineHostBuilder.Create()
             collection.AddOptions<PublishOptions>().Bind(context.Configuration.GetSection("Publish")).ValidateDataAnnotations();
 
             collection.AddModule<GenerateGitHubChangelogModule>();
-            collection.AddModule<GenerateNugetChangelogModule>();
             collection.AddModule<PublishNugetModule>();
             collection.AddModule<PublishGithubModule>();
         }
