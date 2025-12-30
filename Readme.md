@@ -55,7 +55,7 @@ This is your runnable benchmark. The base class ensures the benchmark executes w
 
 You can run your benchmarks with a simple configuration.
 BenchmarkDotNet uses the `Release` configuration by default to run, which will cause a failure when running benchmarks for Revit, where API multi-versioning is required.
-In this case, use the `WithCurrentConfiguration()` extension for the `Job`, which will run the benchmark for your selected solution configuration.
+In this case, use the `WithCurrentConfiguration()` extension for the `Job`, which will run the benchmark for your selected Solution configuration.
 
 ```csharp
 using BenchmarkDotNet.Configs;
