@@ -19,7 +19,7 @@ public sealed class DeleteNugetModule(IOptions<BuildOptions> buildOptions, IOpti
                     await DeleteNugetPackageAsync(context, version, nugetOptions.Value.Source, nugetOptions.Value.ApiKey, cancellationToken);
                 },
                 cancellationToken)
-            .ProcessInParallel();
+            .ProcessOneAtATime();
 
         return await NothingAsync();
     }
