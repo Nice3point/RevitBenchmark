@@ -50,7 +50,7 @@ public sealed class PackProjectsModule(IOptions<BuildOptions> buildOptions) : Mo
 
         await context.DotNet().Restore(new DotNetRestoreOptions
         {
-            ProjectSolution = Projects.Nice3point_TUnit_Revit.FullName,
+            ProjectSolution = Projects.Nice3point_BenchmarkDotNet_Revit.FullName,
             Properties = new List<KeyValue>
             {
                 ("Configuration", configuration)
@@ -59,7 +59,7 @@ public sealed class PackProjectsModule(IOptions<BuildOptions> buildOptions) : Mo
 
         return await context.DotNet().Pack(new DotNetPackOptions
         {
-            ProjectSolution = Projects.Nice3point_TUnit_Revit.FullName,
+            ProjectSolution = Projects.Nice3point_BenchmarkDotNet_Revit.FullName,
             Configuration = configuration,
             NoBuild = true,
             Properties =
