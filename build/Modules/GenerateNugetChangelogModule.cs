@@ -1,16 +1,16 @@
-﻿using ModularPipelines.Context;
+﻿using ModularPipelines.Attributes;
+using ModularPipelines.Context;
 using ModularPipelines.Modules;
-using ModularPipelines.Attributes;
 
 namespace Build.Modules;
 
 [DependsOn<GenerateChangelogModule>]
 public sealed class GenerateNugetChangelogModule : Module<string>
 {
-    protected override async Task<string?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+    protected override async Task<string?> ExecuteAsync(IModuleContext context, CancellationToken cancellationToken)
     {
-        var changelogResult = await GetModule<GenerateChangelogModule>();
-        var changelog = changelogResult.Value!;
+        var changelogResult = await context.GetModule<GenerateChangelogModule>();
+        var changelog = changelogResult.ValueOrDefault!;
 
         var formattedChangelog = changelog
             .Split(Environment.NewLine)
