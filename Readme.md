@@ -93,7 +93,7 @@ public class RevitApplicationBenchmarks : RevitApiBenchmark
 ## Benchmarks using global hooks
 
 BenchmarkDotNet provides **[GlobalSetup]** and **[GlobalCleanup]** hooks, but due to library limitations, it cannot be assigned twice. 
-If you need these hooks in your benchmarks, for example to open the Document, use `OnSetup`/`OnCleanup` overrides instead:
+If you need these hooks in your benchmarks, for example to open the Document, use `OnGlobalSetup`/`OnGlobalCleanup` overrides instead:
 
 ```csharp
 using BenchmarkDotNet.Attributes;
@@ -102,12 +102,12 @@ public class RevitDocumentBenchmarks : RevitApiBenchmark
 {
     private Document _documentFile = null!;
 
-    protected sealed override void OnSetup()
+    protected sealed override void OnGlobalSetup()
     {
         _documentFile = Application.OpenDocumentFile($@"C:\Program Files\Autodesk\Revit {Application.VersionNumber}\Samples\rac_basic_sample_family.rfa");
     }
     
-    protected sealed override void OnCleanup()
+    protected sealed override void OnGlobalCleanup()
     {
         _documentFile.Close(false);
     }

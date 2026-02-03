@@ -18,7 +18,7 @@ public abstract class RevitApiBenchmark : RevitApplicationBenchmark
     public void RevitSessionSetup()
     {
         InitializeRevitConnection();
-        OnSetup();
+        OnGlobalSetup();
     }
 
     /// <summary>
@@ -29,23 +29,23 @@ public abstract class RevitApiBenchmark : RevitApplicationBenchmark
     [GlobalCleanup]
     public void RevitSessionCleanup()
     {
-        OnCleanup();
+        OnGlobalCleanup();
         TerminateRevitConnection();
     }
     
     /// <summary>
-    /// Override this method to implement custom initialization logic before the benchmark runs.
+    /// Override this method to implement custom initialization logic before all benchmark iterations.
     /// </summary>
     /// <remarks>It's going to be executed only once, just before warm up.</remarks>
-    protected virtual void OnSetup()
+    protected virtual void OnGlobalSetup()
     {
     }
 
     /// <summary>
-    /// Override this method to implement custom cleanup logic after the benchmark finishes.
+    /// Override this method to implement custom cleanup logic after all benchmark iterations.
     /// </summary>
     /// <remarks>It's going to be executed only once, after all benchmark runs.</remarks>
-    protected virtual void OnCleanup()
+    protected virtual void OnGlobalCleanup()
     {
     }
 }

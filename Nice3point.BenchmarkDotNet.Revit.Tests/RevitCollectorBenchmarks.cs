@@ -7,12 +7,12 @@ public class RevitCollectorBenchmarks : RevitApiBenchmark
 {
     private Document _documentFile = null!;
 
-    protected sealed override void OnSetup()
+    protected sealed override void OnGlobalSetup()
     {
         _documentFile = Application.OpenDocumentFile($@"C:\Program Files\Autodesk\Revit {Application.VersionNumber}\Samples\rac_basic_sample_family.rfa");
     }
     
-    protected sealed override void OnCleanup()
+    protected sealed override void OnGlobalCleanup()
     {
         _documentFile.Close(false);
     }
