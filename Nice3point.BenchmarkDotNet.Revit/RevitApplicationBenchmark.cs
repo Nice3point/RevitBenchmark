@@ -22,6 +22,9 @@ public abstract class RevitApplicationBenchmark
 #pragma warning restore CA2255
     public static void Initialize()
     {
+        Thread.CurrentThread.SetApartmentState(ApartmentState.Unknown);
+        Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
+
         InjectorInitializer.InitializeModule();
     }
 
