@@ -2,8 +2,7 @@
 
 namespace Nice3point.BenchmarkDotNet.Revit.Tests;
 
-[MemoryDiagnoser]
-public class RevitApplicationBenchmarks : RevitApiBenchmark
+public class ApplicationBenchmarks : RevitApiBenchmark
 {
     [Benchmark]
     public XYZ NewXyz()
