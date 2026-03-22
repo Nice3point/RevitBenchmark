@@ -74,7 +74,7 @@ BenchmarkRunner.Run<MyBenchmarks>(configuration);
 
 ## Application-level benchmarks
 
-Benchmark Revit application‑level operations:
+Benchmark Revit application-level operations:
 
 ```csharp
 using BenchmarkDotNet.Attributes;
@@ -82,75 +82,54 @@ using BenchmarkDotNet.Attributes;
 public class RevitApplicationBenchmarks : RevitApiBenchmark
 {
     [Benchmark]
-    public double Create_XYZ_Distance()
+    public XYZ NewXyz()
     {
-        var point = Application.Create.NewXYZ(3, 4, 5);
-        return point.DistanceTo(XYZ.Zero);
+        return new XYZ(3, 4, 5);
+    }
+
+    [Benchmark]
+    public XYZ CreateNewXyz()
+    {
+        return Application.Create.NewXYZ(3, 4, 5);
     }
 }
 ```
 
-## Benchmarks using global hooks
+## Document benchmarks
 
-BenchmarkDotNet provides **[GlobalSetup]** and **[GlobalCleanup]** hooks, but due to library limitations, it cannot be assigned twice. 
-If you need these hooks in your benchmarks, for example to open the Document, use `OnGlobalSetup`/`OnGlobalCleanup` overrides instead:
+Use `OnGlobalSetup` and `OnGlobalCleanup` overrides to open and close a document around benchmark iterations.
+BenchmarkDotNet provides `[GlobalSetup]` and `[GlobalCleanup]` hooks, but due to library limitations, they cannot be assigned twice:
 
 ```csharp
 using BenchmarkDotNet.Attributes;
 
-public class RevitDocumentBenchmarks : RevitApiBenchmark
+public class RevitCollectorBenchmarks : RevitApiBenchmark
 {
-    private Document _documentFile = null!;
+    private Document _document = null!;
 
     protected sealed override void OnGlobalSetup()
     {
-        _documentFile = Application.OpenDocumentFile($@"C:\Program Files\Autodesk\Revit {Application.VersionNumber}\Samples\rac_basic_sample_family.rfa");
+        _document = Application.NewProjectDocument(UnitSystem.Metric);
     }
-    
+
     protected sealed override void OnGlobalCleanup()
     {
-        _documentFile.Close(false);
+        _document.Close(false);
     }
 
     [Benchmark]
-    public IList<Element> WhereElementIsElementTypeToElements()
+    public IList<Element> WhereElementIsNotElementTypeToElements()
     {
-        return new FilteredElementCollector(_documentFile)
-            .WhereElementIsElementType()
+        return new FilteredElementCollector(_document)
+            .WhereElementIsNotElementType()
             .ToElements();
     }
 
     [Benchmark]
-    public IList<Element> ElementIsElementTypeFilterToElements()
+    public List<Element> WhereElementIsNotElementTypeToList()
     {
-        return new FilteredElementCollector(_documentFile)
-            .WherePasses(new ElementIsElementTypeFilter())
-            .ToElements();
-    }
-
-    [Benchmark]
-    public List<Element> WhereElementIsElementTypeToList()
-    {
-        return new FilteredElementCollector(_documentFile)
-            .WhereElementIsElementType()
-            .ToList();
-    }
-
-    [Benchmark]
-    public List<ElementType> WhereElementIsElementTypeCastToList()
-    {
-        return new FilteredElementCollector(_documentFile)
-            .WhereElementIsElementType()
-            .Cast<ElementType>()
-            .ToList();
-    }
-
-    [Benchmark]
-    public List<ElementType> WhereElementIsElementTypeOfTypeToList()
-    {
-        return new FilteredElementCollector(_documentFile)
-            .WhereElementIsElementType()
-            .OfType<ElementType>()
+        return new FilteredElementCollector(_document)
+            .WhereElementIsNotElementType()
             .ToList();
     }
 }
@@ -168,10 +147,40 @@ Job=MediumRun  BuildConfiguration=Release.R26  IterationCount=15
 LaunchCount=2  WarmupCount=10  
 
 ```
-| Method                                |     Mean |   Error |   StdDev | Allocated |
-|---------------------------------------|---------:|--------:|---------:|----------:|
-| WhereElementIsElementTypeToElements   | 122.0 μs | 4.54 μs |  6.80 μs |   5.55 KB |
-| ElementIsElementTypeFilterToElements  | 412.0 μs | 7.52 μs | 11.26 μs |   5.71 KB |
-| WhereElementIsElementTypeToList       | 122.1 μs | 2.84 μs |  4.17 μs |    5.7 KB |
-| WhereElementIsElementTypeCastToList   | 122.6 μs | 2.41 μs |  3.45 μs |   5.76 KB |
-| WhereElementIsElementTypeOfTypeToList | 122.0 μs | 2.19 μs |  3.20 μs |   5.76 KB |
+| Method                                   |     Mean |     Error |    StdDev | Allocated |
+|------------------------------------------|---------:|----------:|----------:|----------:|
+| WhereElementIsNotElementTypeToElements   | 2.203 ms | 0.0494 ms | 0.1440 ms | 295.05 KB |
+| WhereElementIsNotElementTypeToList       | 2.190 ms | 0.0436 ms | 0.0929 ms | 310.09 KB |
+
+## Benchmark configuration
+
+BenchmarkDotNet initializes Revit with the `English - United States` language and the `C:\Program Files\Autodesk\Revit {version}` installation path. To override these defaults, use assembly-level attributes:
+
+- Add the attributes to any .cs file in your project (e.g., Program.cs):
+
+    ```csharp
+    using Nice3point.Revit.Injector.Attributes;
+    
+    [assembly: RevitLanguage("ENU")]
+    [assembly: RevitInstallationPath("D:\Autodesk\Revit Preview")]
+    ```
+
+- Add the attributes directly to your .csproj file:
+
+    ```xml
+    <!-- Revit Environment Configuration -->
+    <ItemGroup>
+  
+        <AssemblyAttribute Include="Nice3point.Revit.Injector.Attributes.RevitLanguageAttribute">
+            <_Parameter1>ENU</_Parameter1>
+        </AssemblyAttribute>
+  
+        <AssemblyAttribute Include="Nice3point.Revit.Injector.Attributes.RevitInstallationPathAttribute">
+            <_Parameter1>D:\Autodesk\Revit $(RevitVersion)</_Parameter1>
+        </AssemblyAttribute>
+  
+    </ItemGroup>
+    ```
+
+The `RevitLanguage` attribute accepts a [language](https://help.autodesk.com/view/RVT/2026/ENU/?guid=GUID-BD09C1B4-5520-475D-BE7E-773642EEBD6C) name (e.g., "English - United States"), code (e.g., "ENU")
+or [LanguageType](https://www.revitapidocs.com/2026/dfda33cf-cbff-9fde-6672-38402e87510f.htm) enum value (e.g., "English_GB" or "15").
