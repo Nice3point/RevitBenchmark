@@ -1,4 +1,4 @@
-# 2027.0.0-preview.3.20260322
+# 2027.0.0
 
 This release adds support for Revit 2027, benchmarking for different languages and custom Revit installation path.
 
@@ -32,7 +32,7 @@ or [LanguageType](https://www.revitapidocs.com/2026/dfda33cf-cbff-9fde-6672-3840
 
 TUnit initializes Revit from `C:\Program Files\Autodesk\Revit {version}` installation path. To override these defaults, use assembly-level attributes:
 
-- Add the attributes to any .cs file in your project (e.g., TestsConfiguration.cs):
+- Add the attributes to any .cs file in your project (e.g., Program.cs):
 
     ```csharp
     using Nice3point.Revit.Injector.Attributes;

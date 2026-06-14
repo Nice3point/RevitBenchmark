@@ -154,9 +154,9 @@ LaunchCount=2  WarmupCount=10
 
 ## Benchmark configuration
 
-BenchmarkDotNet initializes Revit with the `English - United States` language and the `C:\Program Files\Autodesk\Revit {version}` installation path. To override these defaults, use assembly-level attributes:
+BenchmarkDotNet initializes Revit with the `English - United States` language and the `C:\Program Files\Autodesk\Revit {version}` installation path. To override these defaults:
 
-- Add the attributes to any .cs file in your project (e.g., Program.cs):
+- Add the assembly-level attribute to any .cs file in your project (e.g., Program.cs):
 
     ```csharp
     using Nice3point.Revit.Injector.Attributes;
@@ -165,7 +165,7 @@ BenchmarkDotNet initializes Revit with the `English - United States` language an
     [assembly: RevitInstallationPath("D:\Autodesk\Revit Preview")]
     ```
 
-- Add the attributes directly to your .csproj file:
+- Or add the attributes directly to your .csproj file:
 
     ```xml
     <!-- Revit Environment Configuration -->
