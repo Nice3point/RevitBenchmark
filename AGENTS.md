@@ -30,4 +30,4 @@ It adds only the Revit execution model on top of BenchmarkDotNet; attributes, co
 ## Build and verify
 
 * Build: `dotnet build -c Release.R##`, where the `R##` suffix is the Revit year (`R27` targets Revit 2027).
-* Test: `dotnet run --project Nice3point.BenchmarkDotNet.Revit.Tests -c Release.R##`; required a matching licensed Revit installation.
+* Test: set a Job.Dry and run `dotnet run --project Nice3point.BenchmarkDotNet.Revit.Tests -c Release.R##`; required a matching licensed Revit installation.
