@@ -41,7 +41,7 @@
 
     <!-- Development Dependencies -->
     <ItemGroup>
-        <GlobalPackageReference Include="Polyfill" Version="11.0.1"/>
+        <GlobalPackageReference Include="Polyfill" Version="11.0.2"/>
     </ItemGroup>
 
 </Project>
