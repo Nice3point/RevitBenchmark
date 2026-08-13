@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Autodesk.Revit.ApplicationServices;
+using Nice3point.Revit.Injector;
 
 namespace Nice3point.BenchmarkDotNet.Revit;
 
