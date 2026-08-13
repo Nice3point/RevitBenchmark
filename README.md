@@ -44,7 +44,7 @@ public class MyBenchmarks : RevitApiBenchmark
     [Benchmark]
     public void MyBenchmark()
     {
-        
+
     }
 }
 ```
@@ -143,14 +143,15 @@ AMD Ryzen 5 5600 3.50GHz, 1 CPU, 12 logical and 6 physical cores
   [Host]    : .NET 8.0.22 (8.0.22, 8.0.2225.52707), X64 RyuJIT x86-64-v3
   MediumRun : .NET 8.0.22 (8.0.22, 8.0.2225.52707), X64 RyuJIT x86-64-v3
 
-Job=MediumRun  BuildConfiguration=Release.R26  IterationCount=15  
-LaunchCount=2  WarmupCount=10  
+Job=MediumRun  BuildConfiguration=Release.R26  IterationCount=15
+LaunchCount=2  WarmupCount=10
 
 ```
-| Method                                   |     Mean |     Error |    StdDev | Allocated |
-|------------------------------------------|---------:|----------:|----------:|----------:|
-| WhereElementIsNotElementTypeToElements   | 2.203 ms | 0.0494 ms | 0.1440 ms | 295.05 KB |
-| WhereElementIsNotElementTypeToList       | 2.190 ms | 0.0436 ms | 0.0929 ms | 310.09 KB |
+
+| Method                                 |     Mean |     Error |    StdDev | Allocated |
+|----------------------------------------|---------:|----------:|----------:|----------:|
+| WhereElementIsNotElementTypeToElements | 2.203 ms | 0.0494 ms | 0.1440 ms | 295.05 KB |
+| WhereElementIsNotElementTypeToList     | 2.190 ms | 0.0436 ms | 0.0929 ms | 310.09 KB |
 
 ## Benchmark configuration
 
@@ -160,7 +161,7 @@ BenchmarkDotNet initializes Revit with the `English - United States` language an
 
     ```csharp
     using Nice3point.Revit.Injector.Attributes;
-    
+
     [assembly: RevitLanguage("ENU")]
     [assembly: RevitInstallationPath("D:\Autodesk\Revit Preview")]
     ```
@@ -170,15 +171,15 @@ BenchmarkDotNet initializes Revit with the `English - United States` language an
     ```xml
     <!-- Revit Environment Configuration -->
     <ItemGroup>
-  
+
         <AssemblyAttribute Include="Nice3point.Revit.Injector.Attributes.RevitLanguageAttribute">
             <_Parameter1>ENU</_Parameter1>
         </AssemblyAttribute>
-  
+
         <AssemblyAttribute Include="Nice3point.Revit.Injector.Attributes.RevitInstallationPathAttribute">
             <_Parameter1>D:\Autodesk\Revit $(RevitVersion)</_Parameter1>
         </AssemblyAttribute>
-  
+
     </ItemGroup>
     ```
 

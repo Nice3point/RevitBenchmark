@@ -5,7 +5,7 @@ using BenchmarkDotNet.Jobs;
 namespace Nice3point.BenchmarkDotNet.Revit;
 
 /// <summary>
-/// Provides extension methods for configuring jobs in BenchmarkDotNet.
+///     Provides extension methods for configuring jobs in BenchmarkDotNet.
 /// </summary>
 public static class JobExtensions
 {
@@ -13,7 +13,7 @@ public static class JobExtensions
     extension(Job job)
     {
         /// <summary>
-        /// Configures the job to run with the build configuration of the entry assembly.
+        ///     Configures the job to run with the build configuration of the entry assembly.
         /// </summary>
         public Job WithCurrentConfiguration()
         {

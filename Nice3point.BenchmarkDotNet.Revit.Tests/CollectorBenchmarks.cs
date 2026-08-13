@@ -2,6 +2,7 @@
 
 namespace Nice3point.BenchmarkDotNet.Revit.Tests;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public class CollectorBenchmarks : RevitApiBenchmark
 {
     private Document _document = null!;

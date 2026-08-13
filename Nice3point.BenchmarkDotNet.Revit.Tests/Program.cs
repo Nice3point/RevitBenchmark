@@ -9,4 +9,5 @@ var configuration = ManualConfig.Create(DefaultConfig.Instance)
     .AddJob(Job.Default.WithCurrentConfiguration())
     .AddDiagnoser(MemoryDiagnoser.Default);
 
+BenchmarkRunner.Run<ApplicationBenchmarks>(configuration);
 BenchmarkRunner.Run<CollectorBenchmarks>(configuration);
