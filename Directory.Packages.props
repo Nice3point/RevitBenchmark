@@ -23,7 +23,7 @@
     <!-- Core Dependencies -->
     <ItemGroup>
         <PackageVersion Include="BenchmarkDotNet" Version="0.15.8"/>
-        <PackageVersion Include="PolyHook2.NET" Version="1.1.3"/>
+        <PackageVersion Include="PolyHook2.NET" Version="1.1.9"/>
 
         <!-- Build Automation -->
         <PackageVersion Include="Sourcy.DotNet" Version="1.1.1"/>
