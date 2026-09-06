@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Nice3point.BenchmarkDotNet.Revit\Nice3point.BenchmarkDotNet.Revit.csproj"/>
+        <ProjectReference Include="..\..\source\Nice3point.BenchmarkDotNet.Revit\Nice3point.BenchmarkDotNet.Revit.csproj"/>
     </ItemGroup>
 
 </Project>
