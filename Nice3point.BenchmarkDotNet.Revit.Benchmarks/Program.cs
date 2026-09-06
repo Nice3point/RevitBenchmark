@@ -3,7 +3,7 @@ using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
 using Nice3point.BenchmarkDotNet.Revit;
-using Nice3point.BenchmarkDotNet.Revit.Tests;
+using Nice3point.BenchmarkDotNet.Revit.Benchmarks;
 
 var configuration = ManualConfig.Create(DefaultConfig.Instance)
     .AddJob(Job.Default.WithCurrentConfiguration())

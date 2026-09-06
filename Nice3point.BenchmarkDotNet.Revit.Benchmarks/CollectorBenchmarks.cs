@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 
-namespace Nice3point.BenchmarkDotNet.Revit.Tests;
+namespace Nice3point.BenchmarkDotNet.Revit.Benchmarks;
 
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public class CollectorBenchmarks : RevitApiBenchmark

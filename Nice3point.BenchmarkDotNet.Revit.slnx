@@ -39,6 +39,6 @@
     <BuildType Solution="Release.R27|*" Project="Release"/>
     <Build Project="false"/>
   </Project>
-  <Project Path="Nice3point.BenchmarkDotNet.Revit.Tests/Nice3point.BenchmarkDotNet.Revit.Tests.csproj"/>
+  <Project Path="Nice3point.BenchmarkDotNet.Revit.Benchmarks/Nice3point.BenchmarkDotNet.Revit.Benchmarks.csproj"/>
   <Project Path="Nice3point.BenchmarkDotNet.Revit/Nice3point.BenchmarkDotNet.Revit.csproj"/>
 </Solution>

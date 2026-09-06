@@ -23,11 +23,11 @@ It adds only the Revit execution model on top of BenchmarkDotNet; attributes, co
 ## Repository map
 
 * `Nice3point.BenchmarkDotNet.Revit/` — the benchmark framework, packed as a NuGet package. It exposes `RevitApiBenchmark` for users.
-* `Nice3point.BenchmarkDotNet.Revit.Tests/` — the runnable benchmark host that tests the library. `Program.cs` runs `BenchmarkRunner`; there is no separate unit-test project.
+* `Nice3point.BenchmarkDotNet.Revit.Benchmarks/` — the runnable benchmark host that tests the library. `Program.cs` runs `BenchmarkRunner`; there is no separate unit-test project.
 * `build/` — the ModularPipelines build for publishing.
 * Root — `Directory.Build.props`, `Directory.Packages.props`, `global.json`, `README.md`, `CHANGELOG.md`, CI workflows.
 
 ## Build and verify
 
 * Build: `dotnet build -c Release.R##`, where the `R##` suffix is the Revit year (`R27` targets Revit 2027).
-* Test: set a Job.Dry and run `dotnet run --project Nice3point.BenchmarkDotNet.Revit.Tests -c Release.R##`; required a matching licensed Revit installation.
+* Benchmark: set a Job.Dry and run `dotnet run --project Nice3point.BenchmarkDotNet.Revit.Benchmarks -c Release.R##`; requires a matching licensed Revit installation.

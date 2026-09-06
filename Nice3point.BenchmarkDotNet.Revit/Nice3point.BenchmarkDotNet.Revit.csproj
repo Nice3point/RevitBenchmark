@@ -11,7 +11,7 @@
         <PackageId>Nice3point.BenchmarkDotNet.Revit</PackageId>
         <Authors>Nice3point</Authors>
         <Description>.NET benchmarking library for Revit</Description>
-        <PackageTags>autodesk;revit;benchmark</PackageTags>
+        <PackageTags>autodesk;revit;api;benchmark;benchmarkdotnet</PackageTags>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/Nice3point/RevitBenchmark</RepositoryUrl>
         <PackageProjectUrl>https://github.com/Nice3point/RevitBenchmark</PackageProjectUrl>

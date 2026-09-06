@@ -3,7 +3,7 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net10.0</TargetFramework>
-        <UserSecretsId>49E1480C-0F79-4F03-9DAE-4EE4A0367843</UserSecretsId>
+        <UserSecretsId>32fdd258-d863-4cf0-a7f3-69066c6642e2</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,7 +13,6 @@
         <PackageReference Include="ModularPipelines.Git"/>
         <PackageReference Include="ModularPipelines.GitHub"/>
         <PackageReference Include="ModularPipelines.DotNet"/>
-        <PackageReference Include="JetBrains.Annotations"/>
         <PackageReference Include="Microsoft.VisualStudio.SolutionPersistence"/>
     </ItemGroup>
 
