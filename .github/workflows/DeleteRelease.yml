@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   windows:
@@ -29,9 +30,15 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', 'Directory.Build.props', 'Directory.Packages.props') }}
           restore-keys: ${{ runner.os }}-nuget-
 
+      - name: Log in to NuGet
+        id: nuget
+        uses: NuGet/login@v1
+        with:
+          user: Nice3point
+
       - name: Delete release
         run: dotnet run -c Release -- delete
         working-directory: "build"
         env:
           Delete__Ref: ${{ inputs.ref }}
-          NuGet__ApiKey: ${{ secrets.NUGET_API_KEY }}
+          NuGet__ApiKey: ${{ steps.nuget.outputs.NUGET_API_KEY }}
