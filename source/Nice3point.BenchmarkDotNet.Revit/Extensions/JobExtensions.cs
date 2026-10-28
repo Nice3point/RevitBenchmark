@@ -5,16 +5,23 @@ using BenchmarkDotNet.Jobs;
 namespace Nice3point.BenchmarkDotNet.Revit;
 
 /// <summary>
-///     Provides extension methods for configuring jobs in BenchmarkDotNet.
+///     Provides extension methods for <see cref="Job" /> to select the build configuration of a benchmark.
 /// </summary>
 public static class JobExtensions
 {
-    /// <param name="job">The job to configure.</param>
+    /// <summary>
+    ///     Defines extensions for <see cref="Job" />.
+    /// </summary>
+    /// <param name="job">The <see cref="Job" /> to configure.</param>
     extension(Job job)
     {
         /// <summary>
-        ///     Configures the job to run with the build configuration of the entry assembly.
+        ///     Configures the job to build the benchmark in the build configuration of the entry assembly.
         /// </summary>
+        /// <returns>The <see cref="Job" /> with the build configuration of the entry assembly.</returns>
+        /// <remarks>
+        ///     The job builds in the <c>Release</c> configuration when the entry assembly declares no <see cref="AssemblyConfigurationAttribute" />.
+        /// </remarks>
         public Job WithCurrentConfiguration()
         {
             var configuration = Assembly.GetEntryAssembly()?
