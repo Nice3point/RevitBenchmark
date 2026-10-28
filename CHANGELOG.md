@@ -7,7 +7,7 @@ A benchmark runs as the Revit add-in the `RevitClient` assembly attribute declar
 ```csharp
 using Nice3point.Revit.Injector.Attributes;
 
-[assembly: RevitClient(Id = "B3E7F5A2-9C4D-4E81-A6F0-2D8C51E7B934", Name = "Contoso Benchmarks", VendorId = "Contoso")]
+[assembly: RevitClient(Id = "B3E7F5A2-9C4D-4E81-A6F0-2D8C51E7B934", Name = "Benchmarks", VendorId = "Contoso")]
 ```
 
 Each property is optional: `Id` defaults to a random GUID, `Name` to the ID in uppercase, and `VendorId` to `Autodesk`.
