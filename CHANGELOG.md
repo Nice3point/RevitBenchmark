@@ -1,3 +1,9 @@
+# 2027.0.1
+
+## Bug fixes
+
+- `RevitApiBenchmark` ejects Revit when `OnGlobalSetup` throws, and the benchmark process exits at the end of the run https://github.com/Nice3point/RevitBenchmark/issues/53.
+
 # 2027.0.0
 
 This release adds support for Revit 2027, benchmarking for different languages and custom Revit installation path.
@@ -10,7 +16,7 @@ BenchmarkDotNet initializes Revit with the `English - United States` language. T
 
     ```csharp
     using Nice3point.Revit.Injector.Attributes;
-    
+
     [assembly: RevitLanguage("ENU")]
     ```
 
@@ -36,7 +42,7 @@ TUnit initializes Revit from `C:\Program Files\Autodesk\Revit {version}` install
 
     ```csharp
     using Nice3point.Revit.Injector.Attributes;
-    
+
     [assembly: RevitInstallationPath("D:\Autodesk\Revit Preview")]
     ```
 

@@ -66,7 +66,14 @@ using Nice3point.BenchmarkDotNet.Revit;
 var configuration = ManualConfig.Create()
     .AddJob(Job.Default.WithCurrentConfiguration());
 
-BenchmarkRunner.Run<MyBenchmarks>(configuration);
+BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly)
+    .Run(args, configuration);
+```
+
+`BenchmarkSwitcher` runs the benchmarks the command-line arguments select:
+
+```shell
+dotnet run -c Release.R26 -- --filter '*MyBenchmarks*'
 ```
 
 > [!IMPORTANT]

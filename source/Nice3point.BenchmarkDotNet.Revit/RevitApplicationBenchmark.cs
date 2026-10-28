@@ -5,23 +5,31 @@ using Nice3point.Revit.Injector;
 namespace Nice3point.BenchmarkDotNet.Revit;
 
 /// <summary>
-///     Represents an abstract base class for benchmark that require interaction with the Revit application environment.
-///     Provides methods to initialize and terminate the connection to the Revit application.
+///     Represents a benchmark that connects to the Revit application.
 /// </summary>
+/// <remarks>
+///     <see cref="InitializeRevitConnection" /> opens the connection, and <see cref="TerminateRevitConnection" /> closes it.
+/// </remarks>
 public abstract class RevitApplicationBenchmark
 {
     private static Injector? _injector;
 
     /// <summary>
-    ///     Represents the database level Autodesk Revit Application, providing access to documents, options and other application wide data and settings.
+    ///     Gets the database-level Revit application.
     /// </summary>
+    /// <remarks>
+    ///     The application exposes the documents, the options, and the application-wide settings of Revit.
+    ///     The value is valid only between <see cref="InitializeRevitConnection" /> and <see cref="TerminateRevitConnection" />.
+    /// </remarks>
     protected static Application Application { get; private set; } = null!;
 
     /// <summary>
-    ///     Initializes the required components or dependencies for the execution of the module.
-    ///     This method is automatically invoked during the module's initialization process.
+    ///     Prepares the current process for the connection to Revit.
     /// </summary>
-    /// <remarks>BenchmarkDotNet required a duplicated ModuleInitializer to run from another .exe</remarks>
+    /// <remarks>
+    ///     The runtime calls the method once, when the module loads in the benchmark process.
+    ///     The method sets the STA apartment state of the current thread and initializes the injector.
+    /// </remarks>
 #pragma warning disable CA2255
     [ModuleInitializer]
 #pragma warning restore CA2255
@@ -34,8 +42,13 @@ public abstract class RevitApplicationBenchmark
     }
 
     /// <summary>
-    ///     Initializes the connection to the Revit application.
+    ///     Opens the connection to the Revit application and assigns <see cref="Application" />.
     /// </summary>
+    /// <exception cref="InvalidOperationException">The current process has already opened a connection to Revit.</exception>
+    /// <remarks>
+    ///     A process opens the connection once.
+    ///     Every later call throws, whether the first call succeeded, failed, or the connection was terminated.
+    /// </remarks>
     protected static void InitializeRevitConnection()
     {
         _injector = new Injector();
@@ -44,8 +57,11 @@ public abstract class RevitApplicationBenchmark
 
     /// <summary>
     ///     Terminates the connection to the Revit application.
-    ///     Frees associated resources and properly closes the interaction with the Revit environment.
     /// </summary>
+    /// <remarks>
+    ///     The method does nothing when <see cref="InitializeRevitConnection" /> has not run.
+    ///     After the call, <see cref="Application" /> is invalid.
+    /// </remarks>
     protected static void TerminateRevitConnection()
     {
         _injector?.EjectApplication();
