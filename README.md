@@ -171,7 +171,7 @@ BenchmarkDotNet initializes Revit with the `English - United States` language, t
 
     [assembly: RevitLanguage("ENU")]
     [assembly: RevitInstallationPath(@"D:\Autodesk\Revit Preview")]
-    [assembly: RevitClient(Id = "B3E7F5A2-9C4D-4E81-A6F0-2D8C51E7B934", Name = "Contoso Benchmarks", VendorId = "Contoso")]
+    [assembly: RevitClient(Id = "B3E7F5A2-9C4D-4E81-A6F0-2D8C51E7B934", Name = "Benchmarks", VendorId = "Contoso")]
     ```
 
 - Or add the attributes directly to your .csproj file:
@@ -190,7 +190,7 @@ BenchmarkDotNet initializes Revit with the `English - United States` language, t
 
         <AssemblyAttribute Include="Nice3point.Revit.Injector.Attributes.RevitClientAttribute">
             <Id>B3E7F5A2-9C4D-4E81-A6F0-2D8C51E7B934</Id>
-            <Name>Contoso Benchmarks</Name>
+            <Name>Benchmarks</Name>
             <VendorId>Contoso</VendorId>
         </AssemblyAttribute>
 
@@ -201,6 +201,4 @@ The `RevitLanguage` attribute accepts a [language](https://help.autodesk.com/vie
 or [LanguageType](https://www.revitapidocs.com/2026/dfda33cf-cbff-9fde-6672-38402e87510f.htm) enum value (e.g., "English_GB" or "15").
 
 The `RevitClient` attribute sets the add-in that Revit attributes every API call of the benchmark to, and `Application.ActiveAddInId` returns it.
-Each property is optional: `Id` defaults to a random GUID, `Name` to the ID in uppercase, and `VendorId` to `Autodesk`.
-`Id` accepts any format `Guid.Parse` accepts, and an invalid value fails the benchmark before Revit starts.
-`VendorId` must match the vendor of an Extensible Storage schema the benchmark writes with vendor access.
+Each property is optional, `Id` accepts any format `Guid` accepts, `VendorId` must match the vendor of an Extensible Storage schema the benchmark writes with vendor access.
