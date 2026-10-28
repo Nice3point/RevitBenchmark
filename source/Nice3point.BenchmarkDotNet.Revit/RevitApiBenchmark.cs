@@ -3,29 +3,40 @@ using BenchmarkDotNet.Attributes;
 namespace Nice3point.BenchmarkDotNet.Revit;
 
 /// <summary>
-///     Represents a base class for executing benchmark within the Revit environment.
-///     This class provides setup and cleanup methods for initializing and terminating
-///     the connection to the Revit API before and after the benchmark session.
+///     Represents a benchmark that runs inside the Revit API context.
 /// </summary>
+/// <remarks>
+///     The class opens the connection to Revit before the first benchmark iteration and terminates it after the last one.
+/// </remarks>
 public abstract class RevitApiBenchmark : RevitApplicationBenchmark
 {
     /// <summary>
-    ///     Sets up the Revit session by initializing the connection to the Revit API.
-    ///     This method is executed before the benchmark session begins, ensuring that the
-    ///     necessary prerequisites for the tests interacting with the Revit environment are satisfied.
+    ///     Opens the connection to Revit and runs <see cref="OnGlobalSetup" />.
     /// </summary>
+    /// <remarks>
+    ///     BenchmarkDotNet calls the method once, before the warm-up.
+    ///     An exception from <see cref="OnGlobalSetup" /> terminates the connection and propagates to BenchmarkDotNet.
+    /// </remarks>
     [GlobalSetup]
     public void RevitSessionSetup()
     {
         InitializeRevitConnection();
-        OnGlobalSetup();
+
+        try
+        {
+            OnGlobalSetup();
+        }
+        catch
+        {
+            TerminateRevitConnection();
+            throw;
+        }
     }
 
     /// <summary>
-    ///     Cleans up the Revit session by terminating the connection to the Revit API.
-    ///     This method is executed after the benchmark session concludes, ensuring that
-    ///     resources and connections related to the Revit environment are properly released.
+    ///     Runs <see cref="OnGlobalCleanup" /> and terminates the connection to Revit.
     /// </summary>
+    /// <remarks>BenchmarkDotNet calls the method once, after the last benchmark iteration.</remarks>
     [GlobalCleanup]
     public void RevitSessionCleanup()
     {
@@ -34,17 +45,20 @@ public abstract class RevitApiBenchmark : RevitApplicationBenchmark
     }
 
     /// <summary>
-    ///     Override this method to implement custom initialization logic before all benchmark iterations.
+    ///     When overridden in a derived class, initializes the benchmark before the first iteration.
     /// </summary>
-    /// <remarks>It's going to be executed only once, just before warm up.</remarks>
+    /// <remarks>
+    ///     The method runs once, before the warm-up, while the connection to Revit is open.
+    ///     An exception from the method terminates the connection, and <see cref="OnGlobalCleanup" /> does not run.
+    /// </remarks>
     protected virtual void OnGlobalSetup()
     {
     }
 
     /// <summary>
-    ///     Override this method to implement custom cleanup logic after all benchmark iterations.
+    ///     When overridden in a derived class, releases the resources of the benchmark after the last iteration.
     /// </summary>
-    /// <remarks>It's going to be executed only once, after all benchmark runs.</remarks>
+    /// <remarks>The method runs once, after the last iteration, while the connection to Revit is open.</remarks>
     protected virtual void OnGlobalCleanup()
     {
     }
