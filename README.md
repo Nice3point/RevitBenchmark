@@ -160,6 +160,65 @@ LaunchCount=2  WarmupCount=10
 | WhereElementIsNotElementTypeToElements | 2.203 ms | 0.0494 ms | 0.1440 ms | 295.05 KB |
 | WhereElementIsNotElementTypeToList     | 2.190 ms | 0.0436 ms | 0.0929 ms | 310.09 KB |
 
+## User interface benchmarks
+
+A user interface benchmark runs inside the Revit user interface application and reads its `UIApplication`.
+Use it to measure the API that exists only in Revit.exe: the active document, the selection, the open views, and `OpenAndActivateDocument`.
+
+Reference the Revit UI API in the benchmark project:
+
+```xml
+<PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="$(RevitVersion).*"/>
+```
+
+Create a class inheriting from `RevitApiUiBenchmark`, and prepare the benchmark in a `[GlobalSetup]` method:
+
+```csharp
+using Autodesk.Revit.UI;
+using BenchmarkDotNet.Attributes;
+
+public class RevitSelectionBenchmarks : RevitApiUiBenchmark
+{
+    private UIDocument _uiDocument = null!;
+
+    [GlobalSetup]
+    public void Setup()
+    {
+        _uiDocument = UiApplication.ActiveUIDocument ?? UiApplication.OpenAndActivateDocument(@"C:\Models\Sample.rvt");
+    }
+
+    [Benchmark]
+    public ICollection<ElementId> GetSelectedElementIds()
+    {
+        return _uiDocument.Selection.GetElementIds();
+    }
+
+    [Benchmark]
+    public IList<UIView> GetOpenUiViews()
+    {
+        return _uiDocument.GetOpenUIViews();
+    }
+}
+```
+
+In the preceding code:
+
+- `UiApplication` is the user interface application of the Revit instance that runs the benchmark.
+- `[GlobalSetup]`, `[GlobalCleanup]`, `[IterationSetup]`, and `[IterationCleanup]` are the BenchmarkDotNet attributes, with no override in between.
+- The setup reuses the active document: every user interface benchmark of a run shares one Revit instance.
+
+Revit starts with the first user interface benchmark of a run and closes when the run ends.
+User interface benchmarks and `RevitApiBenchmark` benchmarks run together, and the summary shows both.
+
+The benchmark methods and their setup and cleanup methods run synchronously on the Revit thread, inside a Revit API context.
+The validation rejects:
+
+- A benchmark, setup, or cleanup method that returns `Task` or `ValueTask`.
+- A job that sets the runtime, the platform, the JIT, the GC mode, or environment variables. These settings apply to a process that BenchmarkDotNet starts, and the benchmark runs in Revit.exe.
+
+The `[DotTraceDiagnoser]` attribute of the `BenchmarkDotNet.Diagnostics.dotTrace` package profiles the Revit process of the benchmark.
+The diagnoser downloads the dotTrace command-line profiler on the first run, and the snapshots go to the `BenchmarkDotNet.Artifacts\snapshots` folder.
+
 ## Benchmark configuration
 
 BenchmarkDotNet initializes Revit with the `English - United States` language, the `C:\Program Files\Autodesk\Revit {version}` installation path, and an add-in with a random ID. To override these defaults:
