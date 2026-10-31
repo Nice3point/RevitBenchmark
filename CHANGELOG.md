@@ -1,3 +1,9 @@
+# Unreleased
+
+## Bug fixes
+
+- A benchmark project that references RevitAPIUI runs: the host process of BenchmarkDotNet reads the RevitAPIUI types from the metadata of the installed assembly https://github.com/Nice3point/RevitBenchmark/issues/57.
+
 # 2027.0.1
 
 ## Revit client configuration
