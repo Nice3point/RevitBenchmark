@@ -1,5 +1,27 @@
 # Unreleased
 
+## User interface benchmarks
+
+A benchmark derived from `RevitApiUiBenchmark` runs inside the Revit user interface application and reads its `UIApplication`:
+
+```csharp
+public class RevitSelectionBenchmarks : RevitApiUiBenchmark
+{
+    [Benchmark]
+    public ICollection<ElementId> GetSelectedElementIds()
+    {
+        return UiApplication.ActiveUIDocument.Selection.GetElementIds();
+    }
+}
+```
+
+- One Revit instance serves every user interface benchmark of a run, and it closes when the run ends.
+- User interface benchmarks and `RevitApiBenchmark` benchmarks run together and appear in one summary.
+- The benchmark methods and their setup and cleanup methods run synchronously on the Revit thread, inside a Revit API context.
+- `[DotTraceDiagnoser]` profiles the Revit process of the benchmark.
+
+https://github.com/Nice3point/RevitBenchmark/issues/58
+
 ## Bug fixes
 
 - A benchmark project that references RevitAPIUI runs: the host process of BenchmarkDotNet reads the RevitAPIUI types from the metadata of the installed assembly https://github.com/Nice3point/RevitBenchmark/issues/57.
