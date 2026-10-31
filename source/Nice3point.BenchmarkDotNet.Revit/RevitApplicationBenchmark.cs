@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Autodesk.Revit.ApplicationServices;
+using Nice3point.BenchmarkDotNet.Revit.Hosting;
 using Nice3point.Revit.Injector;
 
 namespace Nice3point.BenchmarkDotNet.Revit;
@@ -27,8 +28,9 @@ public abstract class RevitApplicationBenchmark
     ///     Prepares the current process for the connection to Revit.
     /// </summary>
     /// <remarks>
-    ///     The runtime calls the method once, when the module loads in the benchmark process.
+    ///     The runtime calls the method once, when the module loads in the host process of BenchmarkDotNet and in every benchmark process.
     ///     The method sets the STA apartment state of the current thread and initializes the injector.
+    ///     In the host process, the method resolves RevitAPIUI to its metadata, which the host process reads to discover the benchmarks.
     /// </remarks>
 #pragma warning disable CA2255
     [ModuleInitializer]
@@ -38,6 +40,7 @@ public abstract class RevitApplicationBenchmark
         Thread.CurrentThread.SetApartmentState(ApartmentState.Unknown);
         Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
 
+        RevitUiMetadataResolver.Register();
         InjectorInitializer.InitializeModule();
     }
 
