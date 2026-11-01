@@ -21,8 +21,7 @@ public class SelectionBenchmarks : RevitApiUiBenchmark
 {
     private UIDocument _uiDocument = null!;
 
-    [GlobalSetup]
-    public void SeedModel()
+    protected sealed override void OnGlobalSetup()
     {
         var modelPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.rvt");
         var document = UiApplication.Application.NewProjectDocument(UnitSystem.Metric);

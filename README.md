@@ -164,7 +164,7 @@ LaunchCount=2  WarmupCount=10
 
 Benchmark the functionality that needs the Revit user interface by deriving from `RevitApiUiBenchmark`.
 The class exposes `UiApplication`, and runs every benchmark method and hook on the Revit thread inside a Revit API context.
-Unlike `RevitApiBenchmark`, a UI benchmark uses the `[GlobalSetup]` and `[GlobalCleanup]` attributes of BenchmarkDotNet:
+Use `OnGlobalSetup` and `OnGlobalCleanup` overrides to open a model around benchmark iterations:
 
 ```csharp
 using Autodesk.Revit.UI;
@@ -174,8 +174,7 @@ public class RevitSelectionBenchmarks : RevitApiUiBenchmark
 {
     private UIDocument _uiDocument = null!;
 
-    [GlobalSetup]
-    public void OpenModel()
+    protected sealed override void OnGlobalSetup()
     {
         _uiDocument = UiApplication.OpenAndActivateDocument(modelPath);
     }

@@ -12,8 +12,7 @@ public class SelectionBenchmarks : RevitApiUiBenchmark
 {
     private UIDocument _uiDocument = null!;
 
-    [GlobalSetup]
-    public void OpenModel()
+    protected sealed override void OnGlobalSetup()
     {
         _uiDocument = UiApplication.OpenAndActivateDocument(modelPath);
     }
