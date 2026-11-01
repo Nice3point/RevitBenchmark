@@ -1,27 +1,28 @@
-using System.Globalization;
 using BenchmarkDotNet.Diagnosers;
-using BenchmarkDotNet.Engines;
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Loggers;
 using BenchmarkDotNet.Toolchains;
 using BenchmarkDotNet.Toolchains.Parameters;
 using BenchmarkDotNet.Toolchains.Results;
+using Nice3point.BenchmarkDotNet.Revit.Sessions;
+using Nice3point.BenchmarkDotNet.Revit.Ui.Messages;
 
-namespace Nice3point.BenchmarkDotNet.Revit.Ui;
+namespace Nice3point.BenchmarkDotNet.Revit.Toolchains;
 
 /// <summary>
-///     Executes a built benchmark inside the Revit user interface application of the run.
+///     Executes a built benchmark inside the Revit user interface session of the run.
 /// </summary>
 /// <remarks>
-///     The executor reads the messages of the benchmark the way BenchmarkDotNet reads the pipe of a benchmark process.
-///     Every line goes to the logger.
-///     A line without the <c>//</c> prefix is a result, and a signal goes to the diagnoser before the executor acknowledges it.
+///     The executor reads the events of the benchmark the way BenchmarkDotNet reads the output of a benchmark process.
+///     Every output line goes to the logger.
+///     A host output line without the <c>//</c> prefix is a result.
+///     A signal goes to the diagnoser before the executor acknowledges it.
 ///     The diagnoser receives the Revit process in its parameters.
 /// </remarks>
 internal sealed class RevitUiExecutor : IExecutor
 {
-    private const string LinePrefix = "//";
+    private const string PrefixedLineStart = "//";
 
     /// <inheritdoc />
     public ExecuteResult Execute(ExecuteParameters executeParameters)
@@ -39,7 +40,7 @@ internal sealed class RevitUiExecutor : IExecutor
         }
         catch (Exception exception)
         {
-            executeParameters.Logger.WriteLineError($"// The Revit user interface application failed to start: {exception}");
+            executeParameters.Logger.WriteLineError($"// Revit failed to start: {exception}");
             return CreateFailedResult(executeParameters.LaunchIndex, foundExecutable: true);
         }
 
@@ -49,7 +50,7 @@ internal sealed class RevitUiExecutor : IExecutor
         }
         catch (InvalidOperationException exception)
         {
-            // The connection reports a Revit process that ended or failed during the benchmark.
+            // The connection throws when the Revit process ends or the runner fails.
             executeParameters.Logger.WriteLineError($"// {exception.Message}");
             RevitUiSession.Discard(session);
             return CreateFailedResult(executeParameters.LaunchIndex, foundExecutable: true);
@@ -67,55 +68,52 @@ internal sealed class RevitUiExecutor : IExecutor
             session.Process.ProcessorAffinity = benchmarkCase.Job.Environment.Affinity;
         }
 
-        var command = new RevitUiRunCommand
+        var execution = new RevitUiBenchmarkExecution
         {
             AssemblyPath = assemblyPath,
             BenchmarkId = executeParameters.BenchmarkId.Value,
             BenchmarkName = FullNameProvider.GetBenchmarkName(benchmarkCase)
         };
 
-        logger.WriteLineInfo($"// Execute in the Revit process {session.Process.Id}: {assemblyPath}, benchmark {command.BenchmarkId}");
-        session.Connection.Send(command.ToMessage().Format());
+        logger.WriteLineInfo($"// Execute in Revit process {session.Process.Id}: {assemblyPath}, benchmark {execution.BenchmarkId}");
+        session.Connection.Send(execution.Serialize());
 
         var results = new List<string>();
         var prefixedLines = new List<string>();
         var standardOutput = new List<string>();
-        while (session.Connection.ReceiveAsync().GetAwaiter().GetResult() is { } received)
+        while (session.Connection.ReceiveAsync().GetAwaiter().GetResult() is { } message)
         {
-            var message = RevitUiMessage.Parse(received);
-            switch (message.Kind)
+            switch (RevitUiBenchmarkEvent.Parse(message))
             {
-                case RevitUiMessage.Line:
-                    logger.WriteLine(LogKind.Default, message.Payload);
-                    if (!message.Payload.StartsWith(LinePrefix, StringComparison.Ordinal))
+                case RevitUiBenchmarkHostOutput hostOutput:
+                    logger.WriteLine(LogKind.Default, hostOutput.Line);
+                    if (hostOutput.Line.StartsWith(PrefixedLineStart, StringComparison.Ordinal))
                     {
-                        results.Add(message.Payload);
+                        prefixedLines.Add(hostOutput.Line);
                     }
                     else
                     {
-                        prefixedLines.Add(message.Payload);
+                        results.Add(hostOutput.Line);
                     }
 
                     break;
-                case RevitUiMessage.Output:
-                    logger.WriteLine(LogKind.Default, message.Payload);
-                    standardOutput.Add(message.Payload);
+                case RevitUiBenchmarkStandardOutput output:
+                    logger.WriteLine(LogKind.Default, output.Line);
+                    standardOutput.Add(output.Line);
                     break;
-                case RevitUiMessage.Signal:
-                    var signal = (HostSignal)Enum.Parse(typeof(HostSignal), message.Payload);
-                    executeParameters.Diagnoser?.Handle(signal, diagnoserParameters);
-                    session.Connection.Send(new RevitUiMessage(RevitUiMessage.Acknowledgment, string.Empty).Format());
+                case RevitUiBenchmarkSignal signal:
+                    executeParameters.Diagnoser?.Handle(signal.Signal, diagnoserParameters);
+                    session.Connection.Send(new RevitUiBenchmarkAcknowledgment().Serialize());
                     break;
-                case RevitUiMessage.Completed:
-                    var exitCode = int.Parse(message.Payload, CultureInfo.InvariantCulture);
-                    return new ExecuteResult(true, exitCode, session.Process.Id, results, prefixedLines, standardOutput, executeParameters.LaunchIndex);
+                case RevitUiBenchmarkCompletion completion:
+                    return new ExecuteResult(true, completion.ExitCode, session.Process.Id, results, prefixedLines, standardOutput, executeParameters.LaunchIndex);
             }
         }
 
-        throw new InvalidOperationException("The Revit user interface application closed before the benchmark finished.");
+        throw new InvalidOperationException("Revit closed before the benchmark finished.");
     }
 
-    // On .NET the generated program is an application host, and its managed assembly lies next to it.
+    // On .NET, the managed assembly of the generated program lies next to its application host.
     [Pure]
     private static string GetAssemblyPath(string executablePath)
     {

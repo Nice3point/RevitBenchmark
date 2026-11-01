@@ -4,22 +4,21 @@ using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
 using BenchmarkDotNet.Toolchains;
 using BenchmarkDotNet.Validators;
+using BenchmarkDotNet.Toolchains.CsProj;
 #if NET
 using System.Runtime.Versioning;
-using BenchmarkDotNet.Toolchains.CsProj;
 using BenchmarkDotNet.Toolchains.DotNetCli;
-#else
-using BenchmarkDotNet.Toolchains.CsProj;
 #endif
 
-namespace Nice3point.BenchmarkDotNet.Revit.Ui;
+namespace Nice3point.BenchmarkDotNet.Revit.Toolchains;
 
 /// <summary>
-///     Builds a benchmark with the default toolchain of the current runtime and executes it inside the Revit user interface application.
+///     Represents the toolchain that builds a benchmark with the MSBuild toolchain of the current runtime and executes it inside Revit.
 /// </summary>
 /// <remarks>
-///     The validation rejects the job settings that apply to a benchmark process BenchmarkDotNet starts, and the asynchronous benchmarks.
-///     The benchmark runs synchronously on the Revit thread, and an awaited Revit event would never complete.
+///     The benchmark runs synchronously on the Revit thread.
+///     The validation rejects asynchronous benchmark methods.
+///     The validation rejects the job settings of a benchmark process: the runtime, the platform, the JIT, the GC settings, and the environment variables.
 /// </remarks>
 internal sealed class RevitUiToolchain : IToolchain
 {
@@ -68,12 +67,12 @@ internal sealed class RevitUiToolchain : IToolchain
 
         foreach (var characteristic in processCharacteristics.Where(environment.HasValue))
         {
-            yield return CreateError(benchmarkCase, $"The {characteristic.Id} setting of the job applies to a benchmark process, and a Revit user interface benchmark runs in Revit.exe.");
+            yield return CreateError(benchmarkCase, $"UI benchmarks run in the Revit process and ignore the {characteristic.Id} setting of the job. Remove the {characteristic.Id} setting from the job.");
         }
 
         if (environment.Gc.HasChanges)
         {
-            yield return CreateError(benchmarkCase, "The GC settings of the job apply to a benchmark process, and a Revit user interface benchmark runs in Revit.exe.");
+            yield return CreateError(benchmarkCase, "UI benchmarks run in the Revit process and ignore the GC settings of the job. Remove the GC settings from the job.");
         }
 
         var descriptor = benchmarkCase.Descriptor;
@@ -88,7 +87,7 @@ internal sealed class RevitUiToolchain : IToolchain
 
         foreach (var method in methods.Where(IsAwaitable))
         {
-            yield return CreateError(benchmarkCase, $"{method!.Name} returns {method.ReturnType.Name}. A Revit user interface benchmark runs synchronously on the Revit thread and supports no asynchronous method.");
+            yield return CreateError(benchmarkCase, $"UI benchmarks run synchronously on the Revit thread. Make {method!.Name} synchronous.");
         }
     }
 
@@ -101,7 +100,7 @@ internal sealed class RevitUiToolchain : IToolchain
     private static IToolchain CreateBuildToolchain()
     {
 #if NET
-        // The generated project references the benchmark project, and both target the framework and the platform of the entry assembly.
+        // The generated project targets the framework and the platform of the benchmark project.
         var entryAssembly = Assembly.GetEntryAssembly();
         var frameworkVersion = entryAssembly?.GetCustomAttribute<TargetFrameworkAttribute>() is { } targetFramework
             ? new FrameworkName(targetFramework.FrameworkName).Version
@@ -115,7 +114,7 @@ internal sealed class RevitUiToolchain : IToolchain
 
         return CsProjCoreToolchain.From(new NetCoreAppSettings(targetFrameworkMoniker, null, $".NET {frameworkVersion.Major}.{frameworkVersion.Minor}"));
 #else
-        // Revit 2021 to 2024 run on .NET Framework 4.8, and the custom build configuration of the job requires an MSBuild toolchain.
+        // The Roslyn toolchain, the default on .NET Framework, rejects the build configuration of the job.
         return CsProjClassicNetToolchain.Net48;
 #endif
     }

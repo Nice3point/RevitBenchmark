@@ -26,6 +26,7 @@
     <ItemGroup>
         <PackageVersion Include="BenchmarkDotNet" Version="0.15.8"/>
         <PackageVersion Include="PolyHook2.NET" Version="1.1.9"/>
+        <PackageVersion Include="System.Text.Json" Version="10.0.12" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'"/>
 
         <!-- Build automation -->
         <PackageVersion Include="Sourcy.DotNet" Version="1.1.1"/>
