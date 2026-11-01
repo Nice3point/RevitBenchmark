@@ -44,7 +44,6 @@ UI benchmarks use the `RevitAPIUI` types, add the `Nice3point.Revit.Api.RevitAPI
 
 - A benchmark project that references `RevitAPIUI` runs without `FileNotFoundException` https://github.com/Nice3point/RevitBenchmark/issues/57.
 - After a run of `RevitApiUiBenchmark` benchmarks, Revit opens its window at the position, the size, and the maximized state it had before the run.
-- The dotTrace profiler attaches to the process of a `RevitApiBenchmark` benchmark https://github.com/Nice3point/RevitBenchmark/issues/64.
 
 # 2027.0.1
 
