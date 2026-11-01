@@ -40,6 +40,8 @@ public class SelectionBenchmarks : RevitApiUiBenchmark
 
 UI benchmarks use the `RevitAPIUI` types, add the `Nice3point.Revit.Api.RevitAPIUI` package reference.
 
+`[DotTraceDiagnoser]` of the `BenchmarkDotNet.Diagnostics.dotTrace` package profiles the Revit process of a UI benchmark.
+
 ## Bug fixes
 
 - A benchmark project that references `RevitAPIUI` runs without `FileNotFoundException` https://github.com/Nice3point/RevitBenchmark/issues/57.

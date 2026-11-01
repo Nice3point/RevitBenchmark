@@ -203,6 +203,19 @@ public class RevitSelectionBenchmarks : RevitApiUiBenchmark
 UI benchmarks share one Revit instance, which starts with the first UI benchmark and closes when the run ends.
 Asynchronous benchmark methods and the job settings of the benchmark process, such as the runtime and the GC mode, are not supported.
 
+To profile a UI benchmark with dotTrace, add the `BenchmarkDotNet.Diagnostics.dotTrace` package and mark the class with `[DotTraceDiagnoser]`:
+
+```csharp
+using BenchmarkDotNet.Diagnostics.dotTrace;
+
+[DotTraceDiagnoser]
+public class RevitTransactionBenchmarks : RevitApiUiBenchmark
+{
+}
+```
+
+The snapshot of each benchmark is saved to the `BenchmarkDotNet.Artifacts\snapshots` folder.
+
 ## Benchmark configuration
 
 BenchmarkDotNet initializes Revit with the `English - United States` language, the `C:\Program Files\Autodesk\Revit {version}` installation path, and an add-in with a random ID. To override these defaults:
