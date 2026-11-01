@@ -32,6 +32,7 @@ public abstract class RevitApplicationBenchmark
     ///     The runtime calls the method once per process, when the module loads.
     ///     The method sets the STA apartment state of the current thread and initializes the injector.
     ///     In the BenchmarkDotNet host process, the method registers the resolver of the RevitAPIUI metadata.
+    ///     On .NET Framework, the host process enables the profiler attach thread of the benchmark processes.
     ///     Inside Revit, the method has no effect.
     /// </remarks>
 #pragma warning disable CA2255
@@ -49,6 +50,7 @@ public abstract class RevitApplicationBenchmark
         Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
 
         RevitUiMetadataResolver.Register();
+        ProfilerAttachThread.Enable();
         InjectorInitializer.InitializeModule();
     }
 
