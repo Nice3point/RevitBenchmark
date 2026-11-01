@@ -38,6 +38,7 @@
 
     <ItemGroup>
         <PackageReference Include="Nice3point.Revit.Api.RevitAPI" PrivateAssets="all"/>
+        <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" PrivateAssets="all"/>
         <PackageReference Include="Nice3point.Revit.Injector" PrivateAssets="all"/>
         <PackageReference Include="BenchmarkDotNet"/>
         <PackageReference Include="PolyHook2.NET"/>
@@ -46,6 +47,10 @@
     <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
         <FrameworkReference Include="Microsoft.WindowsDesktop.App"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+        <PackageReference Include="System.Text.Json"/>
     </ItemGroup>
 
     <Target Name="CopyRepackDependencies" AfterTargets="Build" Condition="$(Configuration.Contains('Release'))">
