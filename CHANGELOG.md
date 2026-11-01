@@ -1,3 +1,49 @@
+# Unreleased
+
+This release adds benchmarking of the Revit user interface.
+
+## Revit UI benchmarks
+
+`RevitApiUiBenchmark` runs benchmarks inside a Revit process started with its user interface.
+The `UiApplication` property exposes the `UIApplication` of that process, and every benchmark method and hook runs on the Revit thread inside a Revit API context:
+
+```csharp
+public class SelectionBenchmarks : RevitApiUiBenchmark
+{
+    private UIDocument _uiDocument = null!;
+
+    protected sealed override void OnGlobalSetup()
+    {
+        _uiDocument = UiApplication.OpenAndActivateDocument(modelPath);
+    }
+
+    [Benchmark]
+    public List<Wall> GetElementOfTypeToList()
+    {
+        var document = _uiDocument.Document;
+        return _uiDocument.Selection.GetElementIds()
+            .Select(document.GetElement)
+            .OfType<Wall>()
+            .ToList();
+    }
+
+    [Benchmark]
+    public List<Wall> FilteredElementCollectorOfClassToList()
+    {
+        return new FilteredElementCollector(_uiDocument.Document, _uiDocument.Selection.GetElementIds())
+            .OfClass(typeof(Wall))
+            .Cast<Wall>()
+            .ToList();
+    }
+}
+```
+
+UI benchmarks use the `RevitAPIUI` types, add the `Nice3point.Revit.Api.RevitAPIUI` package reference.
+
+## Bug fixes
+
+- A benchmark project that references `RevitAPIUI` runs without `FileNotFoundException` https://github.com/Nice3point/RevitBenchmark/issues/57.
+
 # 2027.0.1
 
 ## Revit client configuration

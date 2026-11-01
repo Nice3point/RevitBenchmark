@@ -160,6 +160,49 @@ LaunchCount=2  WarmupCount=10
 | WhereElementIsNotElementTypeToElements | 2.203 ms | 0.0494 ms | 0.1440 ms | 295.05 KB |
 | WhereElementIsNotElementTypeToList     | 2.190 ms | 0.0436 ms | 0.0929 ms | 310.09 KB |
 
+## User interface benchmarks
+
+Benchmark the functionality that needs the Revit user interface by deriving from `RevitApiUiBenchmark`.
+The class exposes `UiApplication`, and runs every benchmark method and hook on the Revit thread inside a Revit API context.
+Use `OnGlobalSetup` and `OnGlobalCleanup` overrides to open a model around benchmark iterations:
+
+```csharp
+using Autodesk.Revit.UI;
+using BenchmarkDotNet.Attributes;
+
+public class RevitSelectionBenchmarks : RevitApiUiBenchmark
+{
+    private UIDocument _uiDocument = null!;
+
+    protected sealed override void OnGlobalSetup()
+    {
+        _uiDocument = UiApplication.OpenAndActivateDocument(modelPath);
+    }
+
+    [Benchmark]
+    public List<Wall> GetElementOfTypeToList()
+    {
+        var document = _uiDocument.Document;
+        return _uiDocument.Selection.GetElementIds()
+            .Select(document.GetElement)
+            .OfType<Wall>()
+            .ToList();
+    }
+
+    [Benchmark]
+    public List<Wall> FilteredElementCollectorOfClassToList()
+    {
+        return new FilteredElementCollector(_uiDocument.Document, _uiDocument.Selection.GetElementIds())
+            .OfClass(typeof(Wall))
+            .Cast<Wall>()
+            .ToList();
+    }
+}
+```
+
+UI benchmarks share one Revit instance, which starts with the first UI benchmark and closes when the run ends.
+Asynchronous benchmark methods and the job settings of the benchmark process, such as the runtime and the GC mode, are not supported.
+
 ## Benchmark configuration
 
 BenchmarkDotNet initializes Revit with the `English - United States` language, the `C:\Program Files\Autodesk\Revit {version}` installation path, and an add-in with a random ID. To override these defaults:
