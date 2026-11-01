@@ -162,16 +162,9 @@ LaunchCount=2  WarmupCount=10
 
 ## User interface benchmarks
 
-A user interface benchmark runs inside the Revit user interface application and reads its `UIApplication`.
-Use it to measure the API that exists only in Revit.exe: the active document, the selection, the open views, and `OpenAndActivateDocument`.
-
-Reference the Revit UI API in the benchmark project:
-
-```xml
-<PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="$(RevitVersion).*"/>
-```
-
-Create a class inheriting from `RevitApiUiBenchmark`, and prepare the benchmark in a `[GlobalSetup]` method:
+Benchmark the functionality that needs the Revit user interface by deriving from `RevitApiUiBenchmark`.
+The class exposes `UiApplication`, and runs every benchmark method and hook on the Revit thread inside a Revit API context.
+Unlike `RevitApiBenchmark`, a UI benchmark uses the `[GlobalSetup]` and `[GlobalCleanup]` attributes of BenchmarkDotNet:
 
 ```csharp
 using Autodesk.Revit.UI;
@@ -182,42 +175,34 @@ public class RevitSelectionBenchmarks : RevitApiUiBenchmark
     private UIDocument _uiDocument = null!;
 
     [GlobalSetup]
-    public void Setup()
+    public void OpenModel()
     {
-        _uiDocument = UiApplication.ActiveUIDocument ?? UiApplication.OpenAndActivateDocument(@"C:\Models\Sample.rvt");
+        _uiDocument = UiApplication.OpenAndActivateDocument(modelPath);
     }
 
     [Benchmark]
-    public ICollection<ElementId> GetSelectedElementIds()
+    public List<Wall> GetElementOfTypeToList()
     {
-        return _uiDocument.Selection.GetElementIds();
+        var document = _uiDocument.Document;
+        return _uiDocument.Selection.GetElementIds()
+            .Select(document.GetElement)
+            .OfType<Wall>()
+            .ToList();
     }
 
     [Benchmark]
-    public IList<UIView> GetOpenUiViews()
+    public List<Wall> FilteredElementCollectorOfClassToList()
     {
-        return _uiDocument.GetOpenUIViews();
+        return new FilteredElementCollector(_uiDocument.Document, _uiDocument.Selection.GetElementIds())
+            .OfClass(typeof(Wall))
+            .Cast<Wall>()
+            .ToList();
     }
 }
 ```
 
-In the preceding code:
-
-- `UiApplication` is the user interface application of the Revit instance that runs the benchmark.
-- `[GlobalSetup]`, `[GlobalCleanup]`, `[IterationSetup]`, and `[IterationCleanup]` are the BenchmarkDotNet attributes, with no override in between.
-- The setup reuses the active document: every user interface benchmark of a run shares one Revit instance.
-
-Revit starts with the first user interface benchmark of a run and closes when the run ends.
-User interface benchmarks and `RevitApiBenchmark` benchmarks run together, and the summary shows both.
-
-The benchmark methods and their setup and cleanup methods run synchronously on the Revit thread, inside a Revit API context.
-The validation rejects:
-
-- A benchmark, setup, or cleanup method that returns `Task` or `ValueTask`.
-- A job that sets the runtime, the platform, the JIT, the GC mode, or environment variables. These settings apply to a process that BenchmarkDotNet starts, and the benchmark runs in Revit.exe.
-
-The `[DotTraceDiagnoser]` attribute of the `BenchmarkDotNet.Diagnostics.dotTrace` package profiles the Revit process of the benchmark.
-The diagnoser downloads the dotTrace command-line profiler on the first run, and the snapshots go to the `BenchmarkDotNet.Artifacts\snapshots` folder.
+UI benchmarks share one Revit instance, which starts with the first UI benchmark and closes when the run ends.
+Asynchronous benchmark methods and the job settings of the benchmark process, such as the runtime and the GC mode, are not supported.
 
 ## Benchmark configuration
 

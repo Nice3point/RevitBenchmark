@@ -1,26 +1,45 @@
 # Unreleased
 
-## User interface benchmarks
+This release adds benchmarking of the Revit user interface.
 
-A benchmark derived from `RevitApiUiBenchmark` runs inside the Revit user interface application and reads its `UIApplication`:
+## Revit UI benchmarks
+
+`RevitApiUiBenchmark` runs benchmarks inside a Revit process started with its user interface.
+The `UiApplication` property exposes the `UIApplication` of that process, and every benchmark method and hook runs on the Revit thread inside a Revit API context:
 
 ```csharp
-public class RevitSelectionBenchmarks : RevitApiUiBenchmark
+public class SelectionBenchmarks : RevitApiUiBenchmark
 {
-    [Benchmark]
-    public ICollection<ElementId> GetSelectedElementIds()
+    private UIDocument _uiDocument = null!;
+
+    [GlobalSetup]
+    public void OpenModel()
     {
-        return UiApplication.ActiveUIDocument.Selection.GetElementIds();
+        _uiDocument = UiApplication.OpenAndActivateDocument(modelPath);
+    }
+
+    [Benchmark]
+    public List<Wall> GetElementOfTypeToList()
+    {
+        var document = _uiDocument.Document;
+        return _uiDocument.Selection.GetElementIds()
+            .Select(document.GetElement)
+            .OfType<Wall>()
+            .ToList();
+    }
+
+    [Benchmark]
+    public List<Wall> FilteredElementCollectorOfClassToList()
+    {
+        return new FilteredElementCollector(_uiDocument.Document, _uiDocument.Selection.GetElementIds())
+            .OfClass(typeof(Wall))
+            .Cast<Wall>()
+            .ToList();
     }
 }
 ```
 
-- One Revit instance serves every user interface benchmark of a run, and it closes when the run ends.
-- User interface benchmarks and `RevitApiBenchmark` benchmarks run together and appear in one summary.
-- The benchmark methods and their setup and cleanup methods run synchronously on the Revit thread, inside a Revit API context.
-- `[DotTraceDiagnoser]` profiles the Revit process of the benchmark.
-
-https://github.com/Nice3point/RevitBenchmark/issues/58
+UI benchmarks use the `RevitAPIUI` types, add the `Nice3point.Revit.Api.RevitAPIUI` package reference.
 
 ## Bug fixes
 
