@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using Autodesk.Revit.ApplicationServices;
 using Nice3point.BenchmarkDotNet.Revit.Hosting;
@@ -31,12 +32,19 @@ public abstract class RevitApplicationBenchmark
     ///     The runtime calls the method once per process, when the module loads.
     ///     The method sets the STA apartment state of the current thread and initializes the injector.
     ///     In the BenchmarkDotNet host process, the method registers the resolver of the RevitAPIUI metadata.
+    ///     Inside Revit, the method has no effect.
     /// </remarks>
 #pragma warning disable CA2255
     [ModuleInitializer]
 #pragma warning restore CA2255
     public static void Initialize()
     {
+        // Revit.exe has no managed entry assembly and prepares its own threads.
+        if (Assembly.GetEntryAssembly() is null)
+        {
+            return;
+        }
+
         Thread.CurrentThread.SetApartmentState(ApartmentState.Unknown);
         Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
 
@@ -47,7 +55,7 @@ public abstract class RevitApplicationBenchmark
     /// <summary>
     ///     Opens the connection to the Revit application and assigns <see cref="Application" />.
     /// </summary>
-    /// <exception cref="InvalidOperationException">The current process has already opened a connection to Revit.</exception>
+    /// <exception cref="System.InvalidOperationException">The current process has already opened a connection to Revit.</exception>
     /// <remarks>
     ///     A process opens the connection once.
     ///     Every later call throws, whether the first call succeeded, failed, or the connection was terminated.
