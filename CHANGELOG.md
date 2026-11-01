@@ -40,6 +40,20 @@ public class SelectionBenchmarks : RevitApiUiBenchmark
 
 UI benchmarks use the `RevitAPIUI` types, add the `Nice3point.Revit.Api.RevitAPIUI` package reference.
 
+## DotTrace profiler
+
+Benchmarks support profiling with dotTrace.
+Add the `DotTraceDiagnoser` from the `BenchmarkDotNet.Diagnostics.dotTrace` package to the configuration:
+
+```csharp
+var configuration = ManualConfig.Create()
+    .AddJob(Job.Default.WithCurrentConfiguration())
+    .AddDiagnoser(new DotTraceDiagnoser());
+```
+
+The diagnoser profiles `RevitApiBenchmark` and `RevitApiUiBenchmark` classes alike.
+To profile a single class, mark it with the `[DotTraceDiagnoser]` attribute.
+
 ## Bug fixes
 
 - A benchmark project that references `RevitAPIUI` runs without `FileNotFoundException` https://github.com/Nice3point/RevitBenchmark/issues/57.
