@@ -29,17 +29,17 @@ public abstract class RevitApplicationBenchmark
     ///     Prepares the current process for the connection to Revit.
     /// </summary>
     /// <remarks>
-    ///     The runtime calls the method once, when the module loads in the host process of BenchmarkDotNet and in every benchmark process.
+    ///     The runtime calls the method once per process, when the module loads.
     ///     The method sets the STA apartment state of the current thread and initializes the injector.
-    ///     In the host process, the method resolves RevitAPIUI to its metadata, which the host process reads to discover the benchmarks.
-    ///     Inside the Revit user interface application, which prepares its own process, the method has no effect.
+    ///     In the BenchmarkDotNet host process, the method registers the resolver of the RevitAPIUI metadata.
+    ///     Inside Revit, the method has no effect.
     /// </remarks>
 #pragma warning disable CA2255
     [ModuleInitializer]
 #pragma warning restore CA2255
     public static void Initialize()
     {
-        // Revit.exe is a native host with no entry assembly, and it loads the module on a started thread whose apartment state is fixed.
+        // Revit.exe has no managed entry assembly and prepares its own threads.
         if (Assembly.GetEntryAssembly() is null)
         {
             return;
