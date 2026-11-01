@@ -80,6 +80,7 @@ public class TransactionBenchmarks : RevitApiUiBenchmark
 ## Bug fixes
 
 - A benchmark project that references `RevitAPIUI` runs without `FileNotFoundException` https://github.com/Nice3point/RevitBenchmark/issues/57.
+- After a run of `RevitApiUiBenchmark` benchmarks, Revit opens its window at the position, the size, and the maximized state it had before the run.
 
 # 2027.0.1
 
