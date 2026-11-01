@@ -53,7 +53,6 @@ public class TransactionBenchmarks : RevitApiUiBenchmark
             .ToList();
     }
 
-    // The API closes no active document, and Revit asks to save a modified document on exit.
     protected sealed override void OnGlobalCleanup()
     {
         _document.Save();
@@ -89,7 +88,6 @@ public class TransactionBenchmarks : RevitApiUiBenchmark
         }
     }
 
-    // Every invocation writes a new value, and every transaction commits a change.
     private string CreateComment()
     {
         return (++_revision).ToString(CultureInfo.InvariantCulture);

@@ -40,7 +40,42 @@ public class SelectionBenchmarks : RevitApiUiBenchmark
 
 UI benchmarks use the `RevitAPIUI` types, add the `Nice3point.Revit.Api.RevitAPIUI` package reference.
 
-`[DotTraceDiagnoser]` of the `BenchmarkDotNet.Diagnostics.dotTrace` package profiles the Revit process of a UI benchmark.
+## DotTrace profiler
+
+UI benchmarks support profiling with dotTrace.
+Mark the benchmark class with the `[DotTraceDiagnoser]` attribute from the `BenchmarkDotNet.Diagnostics.dotTrace` package:
+
+```csharp
+[DotTraceDiagnoser]
+public class TransactionBenchmarks : RevitApiUiBenchmark
+{
+    [Benchmark]
+    public void SetCommentsInOneTransaction()
+    {
+        using var transaction = new Transaction(document, "Set comments");
+        transaction.Start();
+
+        foreach (var wall in walls)
+        {
+            wall.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS).Set(comment);
+        }
+
+        transaction.Commit();
+    }
+
+    [Benchmark]
+    public void SetCommentsInTransactionPerWall()
+    {
+        foreach (var wall in walls)
+        {
+            using var transaction = new Transaction(document, "Set comment");
+            transaction.Start();
+            wall.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS).Set(comment);
+            transaction.Commit();
+        }
+    }
+}
+```
 
 ## Bug fixes
 
