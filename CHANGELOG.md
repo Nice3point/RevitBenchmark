@@ -1,3 +1,10 @@
+# 2027.0.3
+
+## Bug fixes
+
+- Fixed a polymorphic record serializing as an empty JSON object in a `RevitApiUiBenchmark` on Revit 2025 https://github.com/Nice3point/RevitBenchmark/issues/66.
+  A benchmark project that ships a later package of a runtime assembly, such as `System.Text.Json` 10.0 on Revit 2025, loads one copy of that assembly for every reference.
+
 # 2027.0.2
 
 This release adds benchmarking of the Revit user interface.
