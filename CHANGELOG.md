@@ -1,3 +1,10 @@
+# 2027.0.4
+
+## Bug fixes
+
+- Fixed dependency type conflicts in a `RevitApiUiBenchmark` on Revit 2025 https://github.com/Nice3point/RevitBenchmark/issues/68.
+  A benchmark project that ships a newer runtime library loads its client assemblies and dependencies in the same context.
+
 # 2027.0.3
 
 ## Bug fixes
