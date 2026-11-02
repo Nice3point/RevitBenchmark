@@ -1,3 +1,10 @@
+# 2027.0.4
+
+## Bug fixes
+
+- Fixed incompatible dependency types in a `RevitApiUiBenchmark` when Revit already holds an equal-version client assembly https://github.com/Nice3point/RevitBenchmark/issues/68.
+  Client assemblies and their dependencies load together inside Revit, while Revit API and runtime contracts remain shared.
+
 # 2027.0.3
 
 ## Bug fixes
