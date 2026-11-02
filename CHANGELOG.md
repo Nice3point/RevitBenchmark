@@ -2,8 +2,8 @@
 
 ## Bug fixes
 
-- Fixed incompatible dependency types in a `RevitApiUiBenchmark` when Revit already holds an equal-version client assembly https://github.com/Nice3point/RevitBenchmark/issues/68.
-  Client assemblies and their dependencies load together inside Revit, while Revit API and runtime contracts remain shared.
+- Fixed dependency type conflicts in a `RevitApiUiBenchmark` on Revit 2025 https://github.com/Nice3point/RevitBenchmark/issues/68.
+  A benchmark project that ships a newer runtime library loads its client assemblies and dependencies in the same context.
 
 # 2027.0.3
 
